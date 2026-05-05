@@ -1,1 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zonato Solar — AI CRM & Sales Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--red:#e81c1c;--red-dark:#b50e0e;--white:#fff;--dark:#1a0202;--dark2:#2d0505;--dark3:#0d0101;--card:rgba(255,255,255,0.03);--border:rgba(232,28,28,0.2);--text:rgba(255,255,255,0.75);--muted:rgba(255,255,255,0.38);--green:#22c55e;--amber:#f59e0b;--blue:#3b82f6;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Exo 2',sans-serif;background:var(--dark3);color:#fff;overflow-x:hidden;min-height:100vh;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--dark);}
+::-webkit-scrollbar-thumb{background:var(--red-dark);border-radius:2px;}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;height:58px;background:rgba(13,1,1,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:600;}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-hex{width:34px;height:34px;background:var(--red);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;position:relative;animation:spinpulse 8s linear infinite;}
+.logo-hex::after{content:'☀';position:absolute;font-size:15px;animation:cspin 8s linear infinite;}
+@keyframes spinpulse{0%,100%{transform:rotate(0deg)}50%{transform:rotate(180deg)}}
+@keyframes cspin{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+.logo-txt .ln{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;display:block;line-height:1;}
+.logo-txt .ls{font-size:8px;letter-spacing:3px;color:var(--red);font-family:'Rajdhani',sans-serif;text-transform:uppercase;}
+.tabs{display:flex;gap:2px;}
+.tab{padding:7px 14px;background:transparent;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-radius:3px;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.tab:hover{color:#fff;background:rgba(232,28,28,0.08);}
+.tab.on{color:#fff;background:rgba(232,28,28,0.16);border:1px solid var(--border);}
+.tab .dot{width:5px;height:5px;border-radius:50%;background:var(--muted);}
+.tab.on .dot{background:var(--red);box-shadow:0 0 5px var(--red);}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);padding:5px 12px;border-radius:2px;font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── VIEWS ── */
+.view{display:none;padding-top:58px;min-height:100vh;}
+.view.on{display:block;}
+
+/* ══════════════════════════
+   BOT VIEW
+══════════════════════════ */
+.bot-wrap{display:grid;grid-template-columns:1fr 420px;min-height:calc(100vh - 58px);background:linear-gradient(155deg,#1a0202 0%,#0d0101 55%,#1a0303 100%);position:relative;overflow:hidden;}
+.bot-wrap::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(232,28,28,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(232,28,28,0.05) 1px,transparent 1px);background-size:55px 55px;pointer-events:none;}
+.bot-left{padding:70px 55px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1;}
+.bot-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,28,28,0.1);border:1px solid rgba(232,28,28,0.3);padding:5px 14px;border-radius:2px;font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:22px;}
+.bot-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(46px,6vw,84px);line-height:.9;letter-spacing:2px;margin-bottom:18px;}
+.bot-h1 em{font-style:normal;background:linear-gradient(90deg,var(--red),#ff6060,var(--red));background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gsh 3s ease infinite;}
+@keyframes gsh{0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
+.bot-p{font-size:14px;color:var(--text);line-height:1.75;max-width:460px;margin-bottom:30px;}
+.bot-stats{display:flex;gap:16px;flex-wrap:wrap;}
+.bstat{text-align:center;padding:14px 18px;background:rgba(232,28,28,0.06);border:1px solid var(--border);border-radius:3px;}
+.bstat .n{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--red);}
+.bstat .l{font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+/* chat panel */
+.chat-panel{background:rgba(13,1,1,0.97);border-left:1px solid var(--border);display:flex;flex-direction:column;height:calc(100vh - 58px);position:sticky;top:58px;}
+.chat-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.agent-wrap{display:flex;align-items:center;gap:11px;}
+.agent-av{width:38px;height:38px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;position:relative;}
+.agent-av::after{content:'';position:absolute;bottom:1px;right:1px;width:9px;height:9px;background:var(--green);border-radius:50%;border:2px solid #0d0101;}
+.agent-nm{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;}
+.agent-st{font-size:10px;color:var(--green);letter-spacing:.5px;}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.msg{max-width:86%;display:flex;flex-direction:column;gap:3px;}
+.msg.bot{align-self:flex-start;}.msg.user{align-self:flex-end;}
+.msg-bub{padding:10px 14px;border-radius:3px;font-size:13px;line-height:1.65;}
+.msg.bot .msg-bub{background:rgba(232,28,28,0.08);border:1px solid rgba(232,28,28,0.18);color:var(--text);}
+.msg.user .msg-bub{background:var(--red);color:#fff;}
+.msg-time{font-size:9px;color:var(--muted);font-family:'Rajdhani',sans-serif;letter-spacing:1px;}
+.msg.user .msg-time{text-align:right;}
+.qr-row{display:flex;flex-wrap:wrap;gap:5px;padding:0 14px 8px;flex-shrink:0;}
+.qr{padding:5px 11px;background:rgba(232,28,28,0.07);border:1px solid rgba(232,28,28,0.22);border-radius:2px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;color:rgba(255,255,255,0.65);cursor:pointer;transition:all .2s;}
+.qr:hover{background:rgba(232,28,28,0.18);color:#fff;border-color:rgba(232,28,28,0.5);}
+.chat-inp-row{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0;}
+.chat-inp{flex:1;padding:9px 13px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:2px;color:#fff;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.chat-inp:focus{border-color:var(--red);}
+.chat-send{padding:9px 15px;background:var(--red);border:none;color:#fff;font-size:15px;cursor:pointer;border-radius:2px;transition:background .2s;}
+.chat-send:hover{background:var(--red-dark);}
+.typing-bub{display:flex;gap:4px;padding:10px 14px;align-items:center;}
+.typing-bub span{width:6px;height:6px;border-radius:50%;background:var(--red);animation:tdot 1.2s infinite;}
+.typing-bub span:nth-child(2){animation-delay:.2s;}
+.typing-bub span:nth-child(3){animation-delay:.4s;}
+@keyframes tdot{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+/* proposal card in chat */
+.prop-card{background:rgba(232,28,28,0.06);border:1px solid var(--border);border-radius:4px;padding:12px;margin:3px 0;font-size:12px;}
+.prop-card .pc-ttl{font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:9px;}
+.prop-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(232,28,28,0.08);}
+.prop-row:last-child{border-bottom:none;}
+.prop-row .pk{color:var(--muted);font-size:11px;}
+.prop-row .pv{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:#fff;}
+.prop-row .pv.red{color:var(--red);}
+.prop-btns{display:flex;gap:6px;margin-top:9px;}
+.prop-btns a{flex:1;padding:7px;text-align:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-decoration:none;border-radius:2px;}
+.prop-btns .pb-call{background:var(--red);color:#fff;}
+.prop-btns .pb-wa{background:#25D366;color:#fff;}
+
+/* ══════════════════════════
+   CRM LAYOUT
+══════════════════════════ */
+.crm-layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 58px);}
+.crm-side{background:rgba(13,1,1,0.97);border-right:1px solid var(--border);padding:16px 0;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;flex-shrink:0;}
+.side-title{padding:0 16px 10px;font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.side-item{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;color:var(--muted);transition:all .2s;border-left:2px solid transparent;}
+.side-item:hover{color:#fff;background:rgba(232,28,28,0.06);}
+.side-item.on{color:#fff;background:rgba(232,28,28,0.1);border-left-color:var(--red);}
+.side-item .si{font-size:14px;}
+.side-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;font-family:'Bebas Neue',sans-serif;}
+.side-divider{height:1px;background:var(--border);margin:8px 0;}
+.crm-main{padding:24px;background:var(--dark3);overflow-y:auto;}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:18px;position:relative;overflow:hidden;transition:border-color .3s;}
+.kpi:hover{border-color:rgba(232,28,28,0.4);}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),transparent);}
+.kpi-lbl{font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:36px;color:#fff;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.kpi-ico{position:absolute;right:14px;top:14px;font-size:24px;opacity:.15;}
+
+/* section header */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.sec-hdr h2{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;}
+.sec-hdr h2 span{color:var(--red);}
+.sec-hdr .hdr-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+/* buttons */
+.btn{padding:8px 18px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;border-radius:2px;transition:all .2s;display:inline-flex;align-items:center;gap:5px;}
+.btn-r{background:var(--red);color:#fff;}.btn-r:hover{background:var(--red-dark);box-shadow:0 0 14px rgba(232,28,28,0.4);}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--muted);}.btn-o:hover{border-color:var(--red);color:#fff;}
+
+/* search */
+.search-inp{padding:8px 13px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:2px;color:#fff;font-family:'Exo 2',sans-serif;font-size:12px;outline:none;width:180px;transition:border-color .2s;}
+.search-inp:focus{border-color:var(--red);}
+
+/* table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:4px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead tr{background:rgba(232,28,28,0.08);}
+th{padding:10px 12px;text-align:left;font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid rgba(232,28,28,0.06);color:var(--text);vertical-align:middle;}
+tr:hover td{background:rgba(232,28,28,0.04);}
+tr:last-child td{border-bottom:none;}
+/* status badges */
+.st{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:2px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.st::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;}
+.st.hot{background:rgba(232,28,28,0.15);color:var(--red);border:1px solid rgba(232,28,28,0.3);}
+.st.warm{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.3);}
+.st.cold{background:rgba(59,130,246,0.12);color:var(--blue);border:1px solid rgba(59,130,246,0.3);}
+.st.converted{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+/* score bar */
+.sbar{width:70px;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;display:inline-block;}
+.sbar-f{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red-dark),var(--red));}
+/* table action buttons */
+.ta{padding:3px 9px;background:rgba(232,28,28,0.08);border:1px solid rgba(232,28,28,0.2);border-radius:2px;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;}
+.ta:hover{background:rgba(232,28,28,0.2);color:#fff;border-color:rgba(232,28,28,0.5);}
+
+/* CRM sections */
+.csec{display:none;}.csec.on{display:block;}
+
+/* form */
+.card-box{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:22px;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.fg label{font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.fg input,.fg select,.fg textarea{padding:9px 13px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:2px;color:#fff;font-family:'Exo 2',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--red);}
+.fg select option{background:#1a0202;}
+.fg textarea{resize:none;height:80px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+.fgrid .full{grid-column:1/-1;}
+.fsec-ttl{grid-column:1/-1;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;color:var(--red);padding:10px 0 8px;border-bottom:1px solid var(--border);margin-top:8px;}
+
+/* calc box */
+.calc-box{background:rgba(232,28,28,0.05);border:1px solid var(--border);border-radius:4px;padding:14px;margin-top:4px;}
+.calc-box .cb-ttl{font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px;}
+.calc-out{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.co-item{background:rgba(255,255,255,0.03);border:1px solid rgba(232,28,28,0.1);border-radius:3px;padding:8px 10px;text-align:center;}
+.co-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--red);line-height:1;}
+.co-lbl{font-size:9px;color:var(--muted);font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+/* lead detail */
+.ld-panel{background:rgba(18,1,1,0.98);border:1px solid var(--border);border-radius:4px;margin-top:18px;display:none;}
+.ld-panel.on{display:block;}
+.ld-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.ld-av{width:44px;height:44px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:19px;flex-shrink:0;}
+.ld-nm{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;}
+.ld-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.ld-cols{display:grid;grid-template-columns:repeat(3,1fr);}
+.ld-col{padding:14px 18px;border-right:1px solid var(--border);}
+.ld-col:last-child{border-right:none;}
+.ld-col-ttl{font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red);margin-bottom:10px;}
+.ldf{margin-bottom:9px;}
+.ldf .fk{font-size:10px;color:var(--muted);margin-bottom:1px;}
+.ldf .fv{font-size:13px;color:#fff;font-weight:600;}
+.ai-box{background:rgba(232,28,28,0.06);border:1px solid rgba(232,28,28,0.22);border-left:3px solid var(--red);border-radius:0 4px 4px 0;padding:11px 14px;margin:10px 18px;font-size:12px;line-height:1.7;color:var(--text);}
+.ai-box .ai-lbl{font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:5px;}
+
+/* follow-up form */
+.fu-form{padding:14px 18px;border-bottom:1px solid var(--border);background:rgba(232,28,28,0.04);display:none;}
+.fu-form .fu-ttl{font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:9px;}
+.fu-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.fu-row input{padding:7px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:2px;color:#fff;font-size:12px;outline:none;}
+.fu-row input:focus{border-color:var(--red);}
+
+/* pipeline */
+.pipe-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:16px;}
+.pipe-col{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.pipe-hdr{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.pipe-ttl{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.pipe-cnt{background:rgba(232,28,28,0.15);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:15px;padding:0 7px;border-radius:2px;}
+.pipe-cards{padding:9px;display:flex;flex-direction:column;gap:7px;min-height:80px;}
+.p-card{background:rgba(255,255,255,0.03);border:1px solid rgba(232,28,28,0.1);border-radius:3px;padding:9px 10px;cursor:pointer;transition:all .2s;}
+.p-card:hover{border-color:rgba(232,28,28,0.4);background:rgba(232,28,28,0.06);}
+.p-card .pcn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;}
+.p-card .pci{font-size:10px;color:var(--muted);}
+.p-card .pcv{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--red);}
+
+/* analytics */
+.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.an-card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:18px;}
+.an-card h4{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1.5px;margin-bottom:14px;}
+.an-card h4 span{color:var(--red);}
+.bar-r{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.bar-lbl{font-size:10px;color:var(--muted);width:110px;flex-shrink:0;font-family:'Rajdhani',sans-serif;}
+.bar-trk{flex:1;height:7px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.bar-fl{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red-dark),var(--red));transition:width 1s;}
+.bar-v{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--red);width:30px;text-align:right;}
+
+/* notif */
+.notif-item{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid rgba(232,28,28,0.07);}
+.notif-item:last-child{border-bottom:none;}
+.n-ico{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.n-ico.r{background:rgba(232,28,28,0.15);}
+.n-ico.g{background:rgba(34,197,94,0.15);}
+.n-ico.a{background:rgba(245,158,11,0.15);}
+.n-ttl{font-size:13px;color:#fff;margin-bottom:2px;}
+.n-tm{font-size:10px;color:var(--muted);font-family:'Rajdhani',sans-serif;letter-spacing:.5px;}
+
+/* alert/info boxes */
+.info-box{background:rgba(232,28,28,0.06);border:1px solid rgba(232,28,28,0.2);border-radius:4px;padding:14px 18px;margin-bottom:14px;}
+.info-box .ib-ttl{font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.info-box p{font-size:13px;color:var(--text);line-height:1.7;}
+
+/* standalone calc */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.sc-res-item{background:rgba(255,255,255,0.03);border:1px solid rgba(232,28,28,0.1);border-radius:3px;padding:9px 12px;}
+.sc-res-item .rv{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--red);line-height:1;}
+.sc-res-item .rl{font-size:9px;color:var(--muted);font-family:'Rajdhani',sans-serif;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+
+@media(max-width:1100px){.bot-wrap{grid-template-columns:1fr;}.chat-panel{height:480px;position:static;}}
+@media(max-width:900px){.crm-layout{grid-template-columns:1fr;}.crm-side{position:static;height:auto;display:flex;flex-wrap:wrap;padding:8px;border-right:none;border-bottom:1px solid var(--border);}.crm-side .side-item{padding:6px 10px;}.pipe-grid{grid-template-columns:repeat(2,1fr);}.kpi-row{grid-template-columns:repeat(2,1fr);}.an-grid{grid-template-columns:1fr;}}
+@media(max-width:600px){.fgrid{grid-template-columns:1fr;}.ld-cols{grid-template-columns:1fr;}.calc-out{grid-template-columns:1fr 1fr;}.sc-grid{grid-template-columns:1fr;}.tabs{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="logo-wrap" href="#">
+    <div class="logo-hex"></div>
+    <div class="logo-txt"><span class="ln">ZONATO SOLAR</span><span class="ls">AI Sales Intelligence</span></div>
+  </a>
+  <div class="tabs">
+    <a class="tab on" href="#bot" onclick="gotoView('bot',this)"><span class="dot"></span>🤖 AI Bot</a>
+    <a class="tab" href="#crm" onclick="gotoView('crm',this)"><span class="dot"></span>📊 Dashboard</a>
+    <a class="tab" href="#pipeline" onclick="gotoView('pipeline',this)"><span class="dot"></span>🔥 Pipeline</a>
+    <a class="tab" href="#analytics" onclick="gotoView('analytics',this)"><span class="dot"></span>📈 Analytics</a>
+    <a class="tab" href="crm-new-lead.html" style="background:var(--red);color:#fff;border:1px solid var(--red);margin-left:6px;">➕ New Lead</a>
+  </div>
+  <div class="live-badge"><span class="live-dot"></span>AI ONLINE</div>
+</div>
+
+<!-- ═══ VIEW: BOT ═══ -->
+<div class="view on" id="v-bot">
+<style>
+/* ── ENHANCED BOT LAYOUT ── */
+.bot-full{display:grid;grid-template-columns:1fr 420px 300px;min-height:calc(100vh - 58px);background:linear-gradient(155deg,#1a0202 0%,#0d0101 55%,#1a0303 100%);position:relative;}
+.bot-full::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(232,28,28,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(232,28,28,0.04) 1px,transparent 1px);background-size:55px 55px;pointer-events:none;}
+.bot-left{padding:50px 40px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1;overflow-y:auto;}
+
+/* CRM PREVIEW PANEL */
+.crm-preview{background:rgba(10,1,1,0.98);border-left:1px solid var(--border);display:flex;flex-direction:column;height:calc(100vh - 58px);position:sticky;top:58px;overflow-y:auto;}
+.cp-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(232,28,28,0.06);}
+.cp-hdr-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--red);}
+.cp-hdr-sub{font-size:10px;color:var(--muted);font-family:'Rajdhani',sans-serif;letter-spacing:1px;}
+.cp-body{padding:14px;flex:1;overflow-y:auto;}
+.cp-section{margin-bottom:14px;}
+.cp-sec-title{font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.cp-sec-title .cp-status{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+.cp-sec-title .cp-status.filled{background:var(--green);}
+.cp-field{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid rgba(232,28,28,0.06);}
+.cp-field:last-child{border-bottom:none;}
+.cp-field .cpk{font-size:10px;color:var(--muted);flex-shrink:0;width:95px;}
+.cp-field .cpv{font-size:12px;color:#fff;font-weight:600;text-align:right;font-family:'Rajdhani',sans-serif;word-break:break-word;}
+.cp-field .cpv.empty{color:var(--muted);font-weight:400;font-style:italic;font-size:10px;}
+.cp-field .cpv.new{color:var(--green);animation:flashIn .4s ease;}
+@keyframes flashIn{from{background:rgba(34,197,94,0.2);border-radius:2px;}to{background:transparent;}}
+.cp-field .cpv.red{color:var(--red);}
+.cp-field .cpv.amber{color:var(--amber);}
+
+/* calc result in preview */
+.cp-calc{background:rgba(232,28,28,0.06);border:1px solid var(--border);border-radius:3px;padding:10px;margin-top:8px;}
+.cp-calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+.cp-calc-item{text-align:center;padding:6px;background:rgba(255,255,255,0.02);border:1px solid rgba(232,28,28,0.1);border-radius:2px;}
+.cp-calc-item .ccv{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--red);line-height:1;}
+.cp-calc-item .ccl{font-size:8px;color:var(--muted);font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;}
+
+/* completion meter */
+.cp-meter{padding:12px 14px;border-top:1px solid var(--border);background:rgba(0,0,0,0.3);flex-shrink:0;}
+.cp-meter-lbl{display:flex;justify-content:space-between;margin-bottom:5px;}
+.cp-meter-lbl span{font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.cp-meter-lbl .pct{color:var(--red);font-size:12px;}
+.cp-meter-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.cp-meter-fill{height:100%;background:linear-gradient(90deg,var(--red-dark),var(--red));border-radius:2px;transition:width .6s ease;}
+.cp-save-btn{display:block;width:100%;margin-top:10px;padding:10px;background:var(--red);border:none;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .2s;text-align:center;text-decoration:none;}
+.cp-save-btn:hover{background:var(--red-dark);box-shadow:0 0 16px rgba(232,28,28,0.4);}
+.cp-save-btn:disabled{opacity:.4;cursor:not-allowed;}
+.cp-save-btn.ready{animation:btn-pulse 2s ease infinite;}
+@keyframes btn-pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,28,28,0.4)}50%{box-shadow:0 0 16px 4px rgba(232,28,28,0.25)}}
+
+/* notification dot on preview */
+.cp-new-badge{display:none;background:var(--green);color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;font-family:'Bebas Neue',sans-serif;animation:flashIn .4s ease;}
+.cp-new-badge.show{display:inline-block;}
+
+/* lead saved confirmation */
+.lead-saved-banner{display:none;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:3px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--green);text-align:center;}
+.lead-saved-banner.show{display:block;}
+
+@media(max-width:1200px){.bot-full{grid-template-columns:1fr 400px;}.crm-preview{display:none;}}
+@media(max-width:800px){.bot-full{grid-template-columns:1fr;}.chat-panel{height:500px;position:static;}}
+</style>
+
+<div class="bot-full">
+  <!-- LEFT INFO PANEL -->
+  <div class="bot-left">
+    <div class="bot-badge">⚡ Claude Sonnet 4 · AI Lead Capture Engine</div>
+    <h1 class="bot-h1">SURYA AI<br><em>AUTO CRM</em></h1>
+    <p class="bot-p">Chat with <strong>SURYA</strong> — our AI sales agent. As you talk, watch the <strong>CRM panel fill automatically</strong> in real-time. Every detail extracted, calculated and saved to your lead database instantly.</p>
+
+    <!-- How it works -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(232,28,28,0.05);border:1px solid var(--border);border-radius:3px;">
+        <span style="font-size:18px;flex-shrink:0;">💬</span>
+        <div><div style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:#fff;">Customer Chats with SURYA</div><div style="font-size:11px;color:var(--muted);">Name, location, bill, power cuts, area — collected naturally in conversation</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(232,28,28,0.05);border:1px solid var(--border);border-radius:3px;">
+        <span style="font-size:18px;flex-shrink:0;">🧠</span>
+        <div><div style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:#fff;">AI Extracts & Calculates</div><div style="font-size:11px;color:var(--muted);">System size, cost, ROI, lead score — auto-computed as data arrives</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(232,28,28,0.05);border:1px solid var(--border);border-radius:3px;">
+        <span style="font-size:18px;flex-shrink:0;">📊</span>
+        <div><div style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:#fff;">CRM Fills Automatically →</div><div style="font-size:11px;color:var(--muted);">One click saves the complete lead with all fields populated</div></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="bot-stats">
+      <div class="bstat"><div class="n" id="bot_totalLeads">0</div><div class="l">Total Leads</div></div>
+      <div class="bstat"><div class="n" id="bot_todayLeads">0</div><div class="l">Today</div></div>
+      <div class="bstat"><div class="n" id="bot_hotLeads">0</div><div class="l">Hot</div></div>
+      <div class="bstat"><div class="n" id="bot_convRate">0%</div><div class="l">Converted</div></div>
+    </div>
+
+    <div style="margin-top:20px;padding:12px 16px;background:rgba(232,28,28,0.05);border:1px solid var(--border);border-radius:4px;display:flex;gap:14px;flex-wrap:wrap;">
+      <a href="tel:+918982379366" style="color:var(--red);text-decoration:none;font-size:13px;">📞 +91 89823 79366</a>
+      <a href="https://wa.me/918982379366" target="_blank" style="color:var(--green);text-decoration:none;font-size:13px;">💬 WhatsApp</a>
+      <span style="font-size:13px;color:var(--muted);">📍 Bilaspur, CG</span>
+    </div>
+  </div>
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel">
+    <div class="chat-hdr">
+      <div class="agent-wrap">
+        <div class="agent-av">☀</div>
+        <div><div class="agent-nm">SURYA — Solar AI Expert</div><div class="agent-st">● Online · claude-sonnet-4</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="extractStatus" style="font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;">LISTENING</span>
+        <span id="extractDot" style="width:6px;height:6px;border-radius:50%;background:var(--muted);display:inline-block;"></span>
+      </div>
+    </div>
+    <div class="chat-msgs" id="chatBox">
+      <div class="msg bot">
+        <div class="msg-bub">🌞 <strong>Namaste! I'm Surya</strong>, Zonato Solar's AI expert.<br><br>I'll design your perfect solar system AND automatically save your details to our CRM — so our team can follow up instantly! ⚡<br><br>Let's start — <strong>what's your name and where are you located?</strong></div>
+        <div class="msg-time">Just now</div>
+      </div>
+    </div>
+    <div class="qr-row" id="qrRow">
+      <div class="qr" onclick="quickSend('My name is Ramesh, I am from Bilaspur')">👤 Share Name</div>
+      <div class="qr" onclick="quickSend('My electricity bill is around 4000 rupees per month')">💡 Share Bill</div>
+      <div class="qr" onclick="quickSend('We have 5-6 power cuts every day')">🔴 Share Cuts</div>
+      <div class="qr" onclick="quickSend('I want to know about offgrid solar system')">🌞 Offgrid Info</div>
+    </div>
+    <div class="chat-inp-row">
+      <input class="chat-inp" id="chatIn" placeholder="Tell me your name, location, electricity bill..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+      <button class="chat-send" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- CRM PREVIEW PANEL -->
+  <div class="crm-preview">
+    <div class="cp-hdr">
+      <div>
+        <div class="cp-hdr-title">⚡ LIVE CRM PREVIEW</div>
+        <div class="cp-hdr-sub">AUTO-FILLING AS YOU CHAT</div>
+      </div>
+      <span class="cp-new-badge" id="cpNewBadge">NEW DATA</span>
+    </div>
+    <div class="cp-body">
+
+      <div class="lead-saved-banner" id="leadSavedBanner">✅ Lead saved to CRM! Redirecting to dashboard...</div>
+
+      <!-- Customer Info -->
+      <div class="cp-section">
+        <div class="cp-sec-title"><span class="cp-status" id="cps1"></span>👤 CUSTOMER</div>
+        <div class="cp-field"><span class="cpk">Name</span><span class="cpv empty" id="cp_name">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Phone</span><span class="cpv empty" id="cp_phone">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Location</span><span class="cpv empty" id="cp_location">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Source</span><span class="cpv" id="cp_source">AI Bot Chat</span></div>
+      </div>
+
+      <!-- Electricity -->
+      <div class="cp-section">
+        <div class="cp-sec-title"><span class="cp-status" id="cps2"></span>⚡ ELECTRICITY</div>
+        <div class="cp-field"><span class="cpk">Monthly Bill</span><span class="cpv empty red" id="cp_bill">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Units/Month</span><span class="cpv empty" id="cp_units">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Tariff ₹/unit</span><span class="cpv empty" id="cp_tariff">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Sanction Load</span><span class="cpv empty" id="cp_sanctload">Waiting...</span></div>
+      </div>
+
+      <!-- Power Cuts -->
+      <div class="cp-section">
+        <div class="cp-sec-title"><span class="cp-status" id="cps3"></span>🔴 POWER CUTS</div>
+        <div class="cp-field"><span class="cpk">Cuts/Day</span><span class="cpv empty amber" id="cp_cuts">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Duration/Cut</span><span class="cpv empty" id="cp_cutdur">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Total/Day</span><span class="cpv empty" id="cp_totalhrs">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Grid Status</span><span class="cpv empty" id="cp_grid">Waiting...</span></div>
+      </div>
+
+      <!-- Site -->
+      <div class="cp-section">
+        <div class="cp-sec-title"><span class="cp-status" id="cps4"></span>🏗️ SITE</div>
+        <div class="cp-field"><span class="cpk">Area (sqft)</span><span class="cpv empty" id="cp_area">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Roof Type</span><span class="cpv empty" id="cp_roof">Waiting...</span></div>
+        <div class="cp-field"><span class="cpk">Property</span><span class="cpv empty" id="cp_prop">Waiting...</span></div>
+      </div>
+
+      <!-- System Design - auto calculated -->
+      <div class="cp-section">
+        <div class="cp-sec-title"><span class="cp-status" id="cps5"></span>☀️ SYSTEM DESIGN</div>
+        <div class="cp-field"><span class="cpk">System Type</span><span class="cpv empty" id="cp_systype">Waiting...</span></div>
+        <div class="cp-calc" id="cpCalcBox" style="display:none;">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:4px;">AUTO CALCULATION</div>
+          <div class="cp-calc-grid">
+            <div class="cp-calc-item"><div class="ccv" id="cc_kw">—</div><div class="ccl">kW</div></div>
+            <div class="cp-calc-item"><div class="ccv" id="cc_pan">—</div><div class="ccl">Panels</div></div>
+            <div class="cp-calc-item"><div class="ccv" id="cc_bat">—</div><div class="ccl">Battery kWh</div></div>
+            <div class="cp-calc-item"><div class="ccv" id="cc_cost">—</div><div class="ccl">Est Cost</div></div>
+            <div class="cp-calc-item"><div class="ccv" id="cc_save">—</div><div class="ccl">Savings/Yr</div></div>
+            <div class="cp-calc-item"><div class="ccv" id="cc_roi">—</div><div class="ccl">ROI Yrs</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lead Score -->
+      <div class="cp-section">
+        <div class="cp-sec-title"><span class="cp-status" id="cps6"></span>🎯 LEAD QUALITY</div>
+        <div class="cp-field"><span class="cpk">Score</span><span class="cpv empty red" id="cp_score">—/99</span></div>
+        <div class="cp-field"><span class="cpk">Status</span><span class="cpv empty" id="cp_status">—</span></div>
+        <div class="cp-field"><span class="cpk">Budget</span><span class="cpv empty" id="cp_budget">—</span></div>
+        <div style="margin-top:6px;height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+          <div id="cp_scorebar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--red-dark),var(--red));border-radius:3px;transition:width .8s;"></div>
+        </div>
+      </div>
+
+      <!-- AI Recommendation -->
+      <div class="cp-section">
+        <div class="cp-sec-title"><span class="cp-status" id="cps7"></span>🤖 AI NOTES</div>
+        <div id="cp_airec" style="font-size:11px;color:rgba(255,150,150,0.8);line-height:1.6;font-style:italic;">Will generate after data collection...</div>
+      </div>
+    </div>
+
+    <!-- Progress meter + Save button -->
+    <div class="cp-meter">
+      <div class="cp-meter-lbl">
+        <span>LEAD COMPLETENESS</span>
+        <span class="pct" id="cp_pct">0%</span>
+      </div>
+      <div class="cp-meter-bar"><div class="cp-meter-fill" id="cp_fill" style="width:0%"></div></div>
+      <button class="cp-save-btn" id="cpSaveBtn" onclick="saveChatLead()" disabled>
+        💾 SAVE TO CRM
+      </button>
+      <a href="crm-new-lead.html" style="display:block;text-align:center;margin-top:7px;font-family:'Rajdhani',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1px;text-decoration:none;">or fill manually →</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ VIEW: CRM ═══ -->
+<div class="view" id="v-crm">
+<div class="crm-layout">
+  <aside class="crm-side">
+    <div class="side-title">CRM MENU</div>
+    <div class="side-item on" onclick="goSec('leads',this)"><span class="si">👥</span>All Leads<span class="side-badge" id="totalBadge">0</span></div>
+    <a class="side-item" href="crm-new-lead.html" style="text-decoration:none;"><span class="si">➕</span>Add Lead</a>
+    <div class="side-item" onclick="goSec('hot',this)"><span class="si">🔥</span>Hot Leads<span class="side-badge" id="hotBadge">0</span></div>
+    <div class="side-item" onclick="goSec('followup',this)"><span class="si">📅</span>Follow Ups</div>
+    <div class="side-item" onclick="goSec('converted',this)"><span class="si">✅</span>Converted</div>
+    <div class="side-divider"></div>
+    <div class="side-title">TOOLS</div>
+    <div class="side-item" onclick="goSec('calculator',this)"><span class="si">🔢</span>Solar Calc</div>
+    <div class="side-item" onclick="goSec('notifications',this)"><span class="si">🔔</span>Notifications</div>
+  </aside>
+
+  <div class="crm-main">
+    <!-- KPIs always visible -->
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-ico">👥</div><div class="kpi-lbl">Total Leads</div><div class="kpi-val" id="k1">0</div><div class="kpi-sub" id="k1s">—</div></div>
+      <div class="kpi"><div class="kpi-ico">🔥</div><div class="kpi-lbl">Hot Leads</div><div class="kpi-val" id="k2">0</div><div class="kpi-sub">Ready to close</div></div>
+      <div class="kpi"><div class="kpi-ico">✅</div><div class="kpi-lbl">Converted</div><div class="kpi-val" id="k3">0</div><div class="kpi-sub">Deals closed</div></div>
+      <div class="kpi"><div class="kpi-ico">💰</div><div class="kpi-lbl">Pipeline Value</div><div class="kpi-val" id="k4">₹0L</div><div class="kpi-sub">Total est. value</div></div>
+    </div>
+
+    <!-- ALL LEADS -->
+    <div class="csec on" id="sec-leads">
+      <div class="sec-hdr">
+        <h2>ALL <span>LEADS</span></h2>
+        <div class="hdr-right">
+          <input class="search-inp" placeholder="🔍 Search..." oninput="filterLeads(this.value)"/>
+          <button class="btn btn-o" onclick="exportCSV()">⬇ Export</button>
+          <a href="crm-new-lead.html" class="btn btn-r" style="text-decoration:none;">+ Add Lead</a>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Name</th><th>Location</th><th>Phone</th>
+            <th>Bill/Mo</th><th>Units</th><th>Sanction kW</th><th>Area sqft</th>
+            <th>Cuts/Day</th><th>System</th><th>Size kW</th><th>Est Cost</th>
+            <th>Savings/Yr</th><th>ROI</th><th>Score</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="tLeads"></tbody>
+        </table>
+      </div>
+      <div class="ld-panel" id="ldPanel"></div>
+    </div>
+
+    <!-- ADD LEAD -->
+    <div class="csec" id="sec-add">
+      <div class="sec-hdr"><h2>ADD <span>NEW LEAD</span></h2></div>
+      <div style="text-align:center;padding:60px 20px;background:var(--card);border:1px solid var(--border);border-radius:4px;">
+        <div style="font-size:48px;margin-bottom:16px;">➕</div>
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:10px;">ADVANCED LEAD CREATION PAGE</h3>
+        <p style="color:var(--muted);font-size:14px;max-width:420px;margin:0 auto 24px;line-height:1.7;">Our dedicated lead creation page features 7 sections, live solar calculator, AI recommendations, power cut analyser and much more.</p>
+        <a href="crm-new-lead.html" class="btn btn-r" style="text-decoration:none;font-size:14px;padding:14px 32px;">⚡ Open Advanced Lead Form →</a>
+      </div>
+    </div>
+
+    <!-- HOT LEADS -->
+    <div class="csec" id="sec-hot">
+      <div class="sec-hdr"><h2>🔥 HOT <span>LEADS</span></h2></div>
+      <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Location</th><th>Bill</th><th>Cuts/Day</th><th>System</th><th>Est Cost</th><th>Score</th><th>Actions</th></tr></thead><tbody id="tHot"></tbody></table></div>
+    </div>
+
+    <!-- FOLLOW UPS -->
+    <div class="csec" id="sec-followup">
+      <div class="sec-hdr"><h2>📅 FOLLOW <span>UPS</span></h2></div>
+      <div id="fuList"><div style="text-align:center;padding:40px;color:var(--muted);">No follow-ups scheduled yet.</div></div>
+    </div>
+
+    <!-- CONVERTED -->
+    <div class="csec" id="sec-converted">
+      <div class="sec-hdr"><h2>✅ CONVERTED <span>CUSTOMERS</span></h2></div>
+      <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Location</th><th>System</th><th>kW</th><th>Final Value</th><th>Date</th></tr></thead><tbody id="tConverted"></tbody></table></div>
+    </div>
+
+    <!-- STANDALONE CALCULATOR -->
+    <div class="csec" id="sec-calculator">
+      <div class="sec-hdr"><h2>🔢 SOLAR SYSTEM <span>CALCULATOR</span></h2></div>
+      <div class="sc-grid">
+        <div class="card-box">
+          <div class="fg"><label>Monthly Bill (₹)</label><input id="sc_bill" type="number" placeholder="3500" oninput="liveCalc()"/></div>
+          <div class="fg"><label>Units / Month (kWh)</label><input id="sc_units" type="number" placeholder="350" oninput="liveCalc()"/></div>
+          <div class="fg"><label>Available Area (sqft)</label><input id="sc_area" type="number" placeholder="600" oninput="liveCalc()"/></div>
+          <div class="fg"><label>Power Cuts / Day</label><input id="sc_cuts" type="number" placeholder="4" oninput="liveCalc()"/></div>
+          <div class="fg"><label>Tariff Rate (₹/unit)</label><input id="sc_tariff" type="number" step="0.1" placeholder="6.5" oninput="liveCalc()"/></div>
+          <div class="fg"><label>System Type</label><select id="sc_type" onchange="liveCalc()"><option value="offgrid">Offgrid</option><option value="hybrid">Hybrid</option></select></div>
+        </div>
+        <div class="card-box" id="scResBox">
+          <h4 style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--red);margin-bottom:14px;">RESULTS</h4>
+          <div id="scRes" style="color:var(--muted);font-size:13px;">Enter details to calculate...</div>
+        </div>
+      </div>
+      <div class="card-box" style="margin-top:14px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px;">⚡ WHY OFFGRID IS BEST FOR HIGH POWER CUT AREAS</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.85;">
+          <p>🌞 <strong>Complete Independence:</strong> With offgrid + lithium batteries, your home or business has 100% power — no matter how many cuts per day. 6 cuts a day? Zero impact on you.</p>
+          <p style="margin-top:8px;">🔋 <strong>LiFePO4 Lithium Battery:</strong> 6000+ charge cycles (15 years), 95% depth-of-discharge, zero maintenance — runs cool even in Chhattisgarh's 45°C summers.</p>
+          <p style="margin-top:8px;">💰 <strong>₹0 Electricity Bill Forever:</strong> After the one-time investment, your electricity cost becomes zero. ROI in 4–6 years, then free energy for 20+ more years.</p>
+          <p style="margin-top:8px;">🛡️ <strong>Proven in India:</strong> Offgrid solar is the most installed solution in rural and semi-urban India — reliable, government-supported and battle-tested.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="csec" id="sec-notifications">
+      <div class="sec-hdr"><h2>🔔 <span>NOTIFICATIONS</span></h2></div>
+      <div>
+        <div class="notif-item"><div class="n-ico r">🔥</div><div><div class="n-ttl">New hot lead from AI bot — <strong>High power cut area detected</strong></div><div class="n-tm">Just now</div></div></div>
+        <div class="notif-item"><div class="n-ico g">✅</div><div><div class="n-ttl">Lead converted — <strong>₹2.8L Hybrid System Rajendra Prasad Gupta</strong></div><div class="n-tm">2 hours ago</div></div></div>
+        <div class="notif-item"><div class="n-ico a">📅</div><div><div class="n-ttl">Follow-up reminder: <strong>Sunita Devi</strong> — Site visit pending</div><div class="n-tm">Today 3:00 PM</div></div></div>
+        <div class="notif-item"><div class="n-ico r">⚡</div><div><div class="n-ttl">AI Bot captured <strong>3 new leads overnight</strong></div><div class="n-tm">This morning</div></div></div>
+        <div class="notif-item"><div class="n-ico g">💰</div><div><div class="n-ttl">Pipeline value crossed <strong>₹25 Lakh</strong> this month</div><div class="n-tm">Yesterday</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ VIEW: PIPELINE ═══ -->
+<div class="view" id="v-pipeline">
+  <div style="padding:24px;">
+    <div class="sec-hdr"><h2>SALES <span>PIPELINE</span></h2><a href="crm-new-lead.html" class="btn btn-r" style="text-decoration:none;">+ Add Lead</a></div>
+    <div class="pipe-grid">
+      <div class="pipe-col"><div class="pipe-hdr"><span class="pipe-ttl" style="color:var(--blue)">NEW</span><span class="pipe-cnt" id="pc0">0</span></div><div class="pipe-cards" id="pl0"></div></div>
+      <div class="pipe-col"><div class="pipe-hdr"><span class="pipe-ttl" style="color:var(--muted)">CONTACTED</span><span class="pipe-cnt" id="pc1">0</span></div><div class="pipe-cards" id="pl1"></div></div>
+      <div class="pipe-col"><div class="pipe-hdr"><span class="pipe-ttl" style="color:var(--amber)">WARM</span><span class="pipe-cnt" id="pc2">0</span></div><div class="pipe-cards" id="pl2"></div></div>
+      <div class="pipe-col"><div class="pipe-hdr"><span class="pipe-ttl" style="color:var(--red)">HOT</span><span class="pipe-cnt" id="pc3">0</span></div><div class="pipe-cards" id="pl3"></div></div>
+      <div class="pipe-col"><div class="pipe-hdr"><span class="pipe-ttl" style="color:var(--green)">CONVERTED</span><span class="pipe-cnt" id="pc4">0</span></div><div class="pipe-cards" id="pl4"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: ANALYTICS ═══ -->
+<div class="view" id="v-analytics">
+  <div style="padding:24px;">
+    <div class="sec-hdr"><h2>SALES <span>ANALYTICS</span></h2></div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-ico">📊</div><div class="kpi-lbl">Avg Deal Size</div><div class="kpi-val" id="a1">—</div></div>
+      <div class="kpi"><div class="kpi-ico">⚡</div><div class="kpi-lbl">Avg System kW</div><div class="kpi-val" id="a2">—</div></div>
+      <div class="kpi"><div class="kpi-ico">🎯</div><div class="kpi-lbl">Conversion %</div><div class="kpi-val" id="a3">—</div></div>
+      <div class="kpi"><div class="kpi-ico">🌍</div><div class="kpi-lbl">Unique Cities</div><div class="kpi-val" id="a4">—</div></div>
+    </div>
+    <div class="an-grid">
+      <div class="an-card"><h4>BY <span>SYSTEM TYPE</span></h4><div id="ch1"><span style="color:var(--muted);font-size:12px;">Add leads to see data</span></div></div>
+      <div class="an-card"><h4>BY <span>STATUS</span></h4><div id="ch2"><span style="color:var(--muted);font-size:12px;">Add leads to see data</span></div></div>
+      <div class="an-card"><h4>BILL RANGE <span>DISTRIBUTION</span></h4><div id="ch3"><span style="color:var(--muted);font-size:12px;">Add leads to see data</span></div></div>
+      <div class="an-card"><h4>TOP <span>LOCATIONS</span></h4><div id="ch4"><span style="color:var(--muted);font-size:12px;">Add leads to see data</span></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════
+//  DATA STORE
+// ══════════════════════════════════════
+var leads = [];
+var chatHist = [];
+
+// Live lead data object — fills as chat progresses
+var LD = {
+  name:'', phone:'', email:'', wa:'', location:'', pin:'', address:'',
+  source:'AI Bot Chat (Surya)', assigned:'',
+  bill:0, units:0, tariff:0, sanctload:0, meter:'', discom:'',
+  cuts:0, cutdur:0, impact:'', grid:'',
+  area:0, roof:'', prop:'', facing:'', shade:'',
+  systype:'', systype_val:'offgrid', battery:'Lithium LiFePO4 (Recommended)',
+  budget:'', timeline:'', decision:'', finance:'', competitor:'',
+  status:'cold', notes:'', airec:'',
+  kw:0, panels:0, battKwh:0, areaNeed:0, days:0,
+  cost:0, annSav:0, roi:0, score:0
+};
+
+function loadLeads(){
+  try{ leads = JSON.parse(localStorage.getItem('zs_leads')||'[]'); }catch(e){ leads=[]; }
+}
+function saveLeads(){ localStorage.setItem('zs_leads', JSON.stringify(leads)); }
+loadLeads();
+
+// ══════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════
+function gotoView(id, btn){
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  var vel = document.getElementById('v-'+id);
+  if(vel) vel.classList.add('on');
+  if(btn) btn.classList.add('on');
+  else{
+    var idx=['bot','crm','pipeline','analytics'].indexOf(id);
+    var tabs=document.querySelectorAll('.tab');
+    if(tabs[idx]) tabs[idx].classList.add('on');
+  }
+  window.location.hash = id;
+  if(id==='crm'){ refreshKPIs(); renderLeads(leads); }
+  if(id==='pipeline'){ renderPipeline(); }
+  if(id==='analytics'){ renderAnalytics(); }
+  if(id==='bot'){ updateBotStats(); }
+}
+
+function goSec(id, el){
+  document.querySelectorAll('.csec').forEach(function(s){ s.classList.remove('on'); });
+  document.querySelectorAll('.side-item').forEach(function(s){ s.classList.remove('on'); });
+  var sec=document.getElementById('sec-'+id);
+  if(sec) sec.classList.add('on');
+  if(el) el.classList.add('on');
+  else{
+    document.querySelectorAll('.side-item').forEach(function(si){
+      if((si.getAttribute('onclick')||'').includes("'"+id+"'")) si.classList.add('on');
+    });
+  }
+  window.location.hash = id==='leads'?'crm':id;
+  if(id==='leads'){ renderLeads(leads); }
+  if(id==='hot'){ renderHot(); }
+  if(id==='converted'){ renderConverted(); }
+  if(id==='followup'){ renderFU(); }
+}
+
+function routeHash(){
+  var h=(window.location.hash||'').replace('#','').toLowerCase();
+  var vmap={bot:'bot',crm:'crm',dashboard:'crm',leads:'crm',hot:'crm',add:'crm',
+    followup:'crm',converted:'crm',calculator:'crm',notifications:'crm',
+    pipeline:'pipeline',analytics:'analytics'};
+  var smap={leads:'leads',hot:'hot',add:'add',followup:'followup',
+    converted:'converted',calculator:'calculator',notifications:'notifications'};
+  var vid=vmap[h]||'crm';
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  var vel=document.getElementById('v-'+vid);
+  if(vel) vel.classList.add('on');
+  var vids=['bot','crm','pipeline','analytics'];
+  var tabs=document.querySelectorAll('.tab');
+  var ti=vids.indexOf(vid);
+  if(tabs[ti]) tabs[ti].classList.add('on');
+  if(vid==='crm'){ var sid=smap[h]||'leads'; goSec(sid,null); refreshKPIs(); renderLeads(leads); }
+  if(vid==='pipeline') renderPipeline();
+  if(vid==='analytics') renderAnalytics();
+  if(vid==='bot') updateBotStats();
+}
+window.addEventListener('hashchange', routeHash);
+
+// ══════════════════════════════════════
+//  BOT STATS
+// ══════════════════════════════════════
+function updateBotStats(){
+  var today = new Date().toLocaleDateString('en-IN');
+  document.getElementById('bot_totalLeads').textContent = leads.length;
+  document.getElementById('bot_todayLeads').textContent = leads.filter(function(l){ return l.date===today; }).length;
+  document.getElementById('bot_hotLeads').textContent = leads.filter(function(l){ return l.status==='hot'; }).length;
+  var conv = leads.filter(function(l){ return l.status==='converted'; }).length;
+  document.getElementById('bot_convRate').textContent = leads.length ? Math.round(conv/leads.length*100)+'%' : '0%';
+}
+
+// ══════════════════════════════════════
+//  SOLAR CALCULATION ENGINE
+// ══════════════════════════════════════
+function calcSolar(bill, units, area, cuts, cutdur, tariff, type){
+  tariff = tariff||6.5;
+  if(!units && bill) units = bill/tariff;
+  if(!units) return null;
+  var daily = units/30;
+  var kw = Math.ceil(daily/5*10)/10;
+  if(kw<0.5) return null;
+  var panels = Math.ceil(kw/0.55);
+  var areaNeed = Math.ceil(panels*25);
+  var battKwh = type==='offgrid'?Math.ceil(daily*1.2*10)/10:Math.ceil(daily*0.5*10)/10;
+  var days = kw<=3?2:kw<=5?3:kw<=10?5:Math.ceil(kw/2);
+  var cpkw = type==='offgrid'?85000:75000;
+  var cost = Math.round(kw*cpkw + battKwh*12000);
+  var annSav = Math.round(units*12*tariff*0.85);
+  var roi = annSav>0?Math.round(cost/annSav*10)/10:0;
+  return {kw,panels,areaNeed,battKwh,days,cost,annSav,roi};
+}
+
+function scoreLD(){
+  var s=0;
+  if(LD.bill>10000)s+=30;else if(LD.bill>6000)s+=22;else if(LD.bill>3000)s+=14;else if(LD.bill>1000)s+=7;
+  if(LD.cuts>6)s+=28;else if(LD.cuts>4)s+=22;else if(LD.cuts>2)s+=14;else if(LD.cuts>0)s+=5;
+  if(LD.status==='hot')s+=25;else if(LD.status==='warm')s+=12;else if(LD.status==='converted')s=99;
+  if(LD.name) s+=5;
+  if(LD.phone) s+=5;
+  if(LD.area>500) s+=4;
+  return Math.min(s,99);
+}
+
+function autoStatusFromScore(score){
+  if(score>=70) return 'hot';
+  if(score>=40) return 'warm';
+  return 'cold';
+}
+
+// ══════════════════════════════════════
+//  CRM PREVIEW PANEL UPDATER
+// ══════════════════════════════════════
+function updatePreview(){
+  // Helper: set field with flash animation
+  function setField(id, val, cls){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(val && val!==el._lastVal){
+      el.textContent = val;
+      el.className = 'cpv '+(cls||'');
+      el.classList.add('new');
+      setTimeout(function(){ el.classList.remove('new'); }, 600);
+      el._lastVal = val;
+      // Show NEW badge
+      var badge = document.getElementById('cpNewBadge');
+      if(badge){ badge.classList.add('show'); setTimeout(function(){ badge.classList.remove('show'); },2000); }
+    } else if(!val){
+      el.textContent = 'Waiting...';
+      el.className = 'cpv empty '+(cls||'');
+    }
+  }
+
+  // Customer
+  setField('cp_name', LD.name);
+  setField('cp_phone', LD.phone);
+  setField('cp_location', LD.location);
+
+  // Electricity
+  setField('cp_bill', LD.bill?'₹'+fmt(LD.bill)+'/mo':'', 'red');
+  setField('cp_units', LD.units?LD.units+' kWh':'');
+  setField('cp_tariff', LD.tariff?'₹'+LD.tariff+'/unit':'');
+  setField('cp_sanctload', LD.sanctload?LD.sanctload+' kW':'');
+
+  // Power cuts
+  setField('cp_cuts', LD.cuts?LD.cuts+' cuts/day':'', LD.cuts>3?'amber':'');
+  setField('cp_cutdur', LD.cutdur?LD.cutdur+' hrs/cut':'');
+  var totalHrs = LD.cuts&&LD.cutdur?LD.cuts*LD.cutdur:0;
+  setField('cp_totalhrs', totalHrs?totalHrs.toFixed(1)+' hrs/day':'');
+  setField('cp_grid', LD.grid);
+
+  // Site
+  setField('cp_area', LD.area?LD.area+' sqft':'');
+  setField('cp_roof', LD.roof);
+  setField('cp_prop', LD.prop);
+
+  // System type
+  setField('cp_systype', LD.systype);
+
+  // Auto-calculate if we have enough data
+  if(LD.bill||LD.units){
+    var r = calcSolar(LD.bill, LD.units, LD.area, LD.cuts, LD.cutdur, LD.tariff||6.5, LD.systype_val||'offgrid');
+    if(r){
+      LD.kw=r.kw; LD.panels=r.panels; LD.battKwh=r.battKwh; LD.areaNeed=r.areaNeed;
+      LD.days=r.days; LD.cost=r.cost; LD.annSav=r.annSav; LD.roi=r.roi;
+      var calcBox = document.getElementById('cpCalcBox');
+      if(calcBox) calcBox.style.display='block';
+      setText('cc_kw', r.kw+' kW');
+      setText('cc_pan', r.panels+'×');
+      setText('cc_bat', r.battKwh+' kWh');
+      setText('cc_cost', '₹'+fmtShort(r.cost));
+      setText('cc_save', '₹'+fmtShort(r.annSav)+'/yr');
+      setText('cc_roi', r.roi+' yrs');
+    }
+  }
+
+  // Score
+  LD.score = scoreLD();
+  LD.status = autoStatusFromScore(LD.score);
+  var scoreColors = {hot:'red',warm:'amber',cold:''};
+  setField('cp_score', LD.score+'/99', scoreColors[LD.status]||'');
+  setField('cp_status', LD.status.toUpperCase(), scoreColors[LD.status]||'');
+  setField('cp_budget', LD.budget);
+  var sbar = document.getElementById('cp_scorebar');
+  if(sbar) sbar.style.width = LD.score+'%';
+
+  // Section status dots
+  var cps1 = (LD.name||LD.phone||LD.location);
+  var cps2 = (LD.bill||LD.units);
+  var cps3 = (LD.cuts);
+  var cps4 = (LD.area||LD.prop);
+  var cps5 = (LD.kw);
+  var cps6 = (LD.score>0);
+  var cps7 = (LD.airec);
+  [['cps1',cps1],['cps2',cps2],['cps3',cps3],['cps4',cps4],['cps5',cps5],['cps6',cps6],['cps7',cps7]].forEach(function(pair){
+    var el=document.getElementById(pair[0]); if(el){ if(pair[1]) el.classList.add('filled'); else el.classList.remove('filled'); }
+  });
+
+  // Extract status dot
+  var exDot = document.getElementById('extractDot');
+  var exSt = document.getElementById('extractStatus');
+  if(exDot&&exSt){
+    exDot.style.background = LD.score>60?'var(--red)':LD.score>30?'var(--amber)':'var(--green)';
+    exSt.textContent = LD.score>60?'HOT LEAD':LD.score>30?'WARM LEAD':'LISTENING';
+    exSt.style.color = LD.score>60?'var(--red)':LD.score>30?'var(--amber)':'var(--muted)';
+  }
+
+  // Completeness %
+  var fields = [LD.name,LD.phone,LD.location,LD.bill,LD.cuts,LD.area,LD.systype];
+  var filled = fields.filter(function(v){return v&&v!==0;}).length;
+  var pct = Math.round(filled/fields.length*100);
+  var fill = document.getElementById('cp_fill');
+  var pctEl = document.getElementById('cp_pct');
+  if(fill) fill.style.width = pct+'%';
+  if(pctEl) pctEl.textContent = pct+'%';
+
+  // Save button
+  var saveBtn = document.getElementById('cpSaveBtn');
+  if(saveBtn){
+    var canSave = LD.name && LD.phone && LD.location;
+    saveBtn.disabled = !canSave;
+    if(canSave) saveBtn.classList.add('ready'); else saveBtn.classList.remove('ready');
+  }
+}
+
+function setText(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+function fmt(n){ return n?(Math.round(parseFloat(n))||0).toLocaleString('en-IN'):'0'; }
+function fmtShort(n){
+  if(!n) return '0';
+  if(n>=100000) return (n/100000).toFixed(1)+'L';
+  if(n>=1000) return (n/1000).toFixed(0)+'K';
+  return String(n);
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════════════
+//  INTELLIGENT DATA EXTRACTION ENGINE
+// ══════════════════════════════════════
+function extractFromConversation(userMsg, botReply){
+  var combined = (userMsg + ' ' + botReply).toLowerCase();
+  var original = userMsg + ' ' + botReply;
+  var changed = false;
+
+  // ── NAME ──
+  if(!LD.name){
+    var namePatterns = [
+      /(?:my name is|i am|i'm|naam hai|mera naam|call me|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})/i,
+      /(?:^|\.\s*)([A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+(?:here|speaking|from)/i,
+      /namaste[,\s]+(?:mai|main|mein|i am|i'm)?\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i
+    ];
+    for(var i=0;i<namePatterns.length;i++){
+      var nm = original.match(namePatterns[i]);
+      if(nm && nm[1] && nm[1].length>1){ LD.name=nm[1].trim(); changed=true; break; }
+    }
+    // Also check bot reply for confirmed name
+    var botName = botReply.match(/(?:nice to meet you|hello|namaste|great)[,\s]+([A-Z][a-z]+)/i);
+    if(!LD.name && botName && botName[1]) { LD.name=botName[1]; changed=true; }
+  }
+
+  // ── PHONE ──
+  if(!LD.phone){
+    var ph = original.match(/(?:\+91|91|0)?([6-9]\d{9})/);
+    if(ph){ LD.phone=(ph[1].length===10?'+91':'')+ph[1]; changed=true; }
+  }
+
+  // ── LOCATION ──
+  if(!LD.location){
+    var locPatterns = [
+      /(?:from|in|at|located in|location is|stay in|live in|hoon|rehta|rehti)\s+([A-Z][a-z]+(?:[\s,]+[A-Z][a-z]+){0,2})/i,
+      /([A-Z][a-z]+(?:pur|bad|nagar|garh|ganj|puri|puram|wadi|wada))\b/,
+      /bilaspur|raipur|durg|korba|jagdalpur|rajnandgaon|ambikapur|raigarh|bhilai|dhamtari/i
+    ];
+    for(var li=0;li<locPatterns.length;li++){
+      var lm = original.match(locPatterns[li]);
+      if(lm){ LD.location=(lm[1]||lm[0]).trim(); changed=true; break; }
+    }
+  }
+
+  // ── EMAIL ──
+  if(!LD.email){
+    var em = original.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+    if(em){ LD.email=em[0]; changed=true; }
+  }
+
+  // ── BILL ──
+  if(!LD.bill){
+    var billPatterns = [
+      /(?:bill|bijli|electricity|current)(?:\s+is|\s+of|\s+around|\s+comes|\s+aata)?\s*(?:rs\.?|₹|inr)?\s*(\d{3,6})/i,
+      /(?:rs\.?|₹|inr)\s*(\d{3,6})\s*(?:per month|\/month|monthly|mahine)/i,
+      /(\d{3,6})\s*(?:rs|rupees|₹)\s*(?:per month|\/month|monthly|ka bill)/i,
+      /(?:pay|paying|paid)\s*(?:about|around|nearly|approx)?\s*(?:rs\.?|₹)?\s*(\d{3,6})/i
+    ];
+    for(var bi=0;bi<billPatterns.length;bi++){
+      var bm = combined.match(billPatterns[bi]);
+      if(bm && parseInt(bm[1])>100){ LD.bill=parseInt(bm[1]); changed=true; break; }
+    }
+  }
+
+  // ── UNITS ──
+  if(!LD.units){
+    var um = combined.match(/(\d{2,4})\s*(?:unit|kwh|kw\/h|kilo\s*watt)/i);
+    if(um){ LD.units=parseInt(um[1]); changed=true; }
+  }
+
+  // ── TARIFF ──
+  if(!LD.tariff){
+    var tm = combined.match(/(?:tariff|rate|per unit|unit rate)[^0-9]*(\d+\.?\d*)/i);
+    if(tm && parseFloat(tm[1])>0 && parseFloat(tm[1])<30){ LD.tariff=parseFloat(tm[1]); changed=true; }
+  }
+
+  // ── SANCTIONED LOAD ──
+  if(!LD.sanctload){
+    var slm = combined.match(/(?:sanction(?:ed)?|load|meter)\s*(?:is|of|=)?\s*(\d+\.?\d*)\s*(?:kw|kilo\s*watt)/i);
+    if(slm){ LD.sanctload=parseFloat(slm[1]); changed=true; }
+  }
+
+  // ── POWER CUTS ──
+  if(!LD.cuts){
+    var cutPatterns = [
+      /(\d+)\s*(?:to\s*\d+)?\s*(?:times?|cuts?|power\s*cut|bijli\s*jati|load\s*sheeding)\s*(?:per|a|in|every|each|har)?\s*day/i,
+      /(\d+)\s*(?:times?|cuts?|baar)\s*(?:daily|rojana|roz)/i,
+      /(?:power\s*cut|cuts?|bijli)\s*(?:comes?\s*)?(\d+)\s*times?\s*(?:a\s*day|per\s*day|daily)/i,
+      /(\d+)[–\-](\d+)\s*(?:cuts?|times?)\s*(?:per|a)?\s*day/i
+    ];
+    for(var ci=0;ci<cutPatterns.length;ci++){
+      var cm = combined.match(cutPatterns[ci]);
+      if(cm){
+        var cutVal = cm[2]?Math.round((parseInt(cm[1])+parseInt(cm[2]))/2):parseInt(cm[1]);
+        if(cutVal>0 && cutVal<30){ LD.cuts=cutVal; changed=true; break; }
+      }
+    }
+  }
+
+  // ── CUT DURATION ──
+  if(!LD.cutdur && LD.cuts){
+    var cdm = combined.match(/(?:each|every|per|for)\s*(?:cut|time|hour|hr)?\s*(?:is|of|=|lasts?)?\s*(\d+\.?\d*)\s*(?:hours?|hrs?|ghante)/i);
+    if(!cdm) cdm = combined.match(/(\d+\.?\d*)\s*(?:hours?|hrs?)\s*(?:each|per|every|baar)/i);
+    if(cdm){ LD.cutdur=parseFloat(cdm[1]); changed=true; }
+  }
+
+  // ── AREA ──
+  if(!LD.area){
+    var am = combined.match(/(\d{2,5})\s*(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot)/i);
+    if(!am) am = combined.match(/(?:area|space|roof|terrace)\s*(?:is|of|=|about|around)?\s*(\d{3,5})/i);
+    if(am){ LD.area=parseInt(am[1]); changed=true; }
+  }
+
+  // ── ROOF TYPE ──
+  if(!LD.roof){
+    if(/rcc|concrete|flat\s*roof/i.test(combined)){ LD.roof='RCC Flat Roof'; changed=true; }
+    else if(/tin|metal\s*sheet|gi\s*sheet/i.test(combined)){ LD.roof='Tin/Metal Sheet'; changed=true; }
+    else if(/tile|mangalore|slant/i.test(combined)){ LD.roof='Tiled Roof'; changed=true; }
+    else if(/ground|open\s*land|farm/i.test(combined)){ LD.roof='Open Ground'; changed=true; }
+  }
+
+  // ── PROPERTY TYPE ──
+  if(!LD.prop){
+    if(/house|home|ghar|residential|bungalow|villa/i.test(combined)){ LD.prop='Residential'; changed=true; }
+    else if(/shop|office|showroom|commercial/i.test(combined)){ LD.prop='Commercial'; changed=true; }
+    else if(/factory|industry|industrial|plant/i.test(combined)){ LD.prop='Industrial'; changed=true; }
+    else if(/farm|agriculture|khet|field/i.test(combined)){ LD.prop='Agricultural'; changed=true; }
+    else if(/hospital|school|college|institute/i.test(combined)){ LD.prop='Institution'; changed=true; }
+  }
+
+  // ── SYSTEM TYPE ──
+  if(!LD.systype){
+    if(/offgrid|off.grid|off grid|without grid|no grid/i.test(combined)){
+      LD.systype='Offgrid Solar + Lithium Battery'; LD.systype_val='offgrid'; changed=true;
+    } else if(/hybrid/i.test(combined)){
+      LD.systype='Hybrid Solar + Lithium Battery'; LD.systype_val='hybrid'; changed=true;
+    } else if(LD.cuts>3){
+      // Auto-recommend offgrid for high power cut areas
+      LD.systype='Offgrid Solar + Lithium Battery'; LD.systype_val='offgrid'; changed=true;
+    }
+  }
+
+  // ── GRID STATUS ──
+  if(!LD.grid){
+    if(/no grid|remote|off.grid area|no electricity|bijli nahi/i.test(combined)){ LD.grid='No Grid (Remote Area)'; changed=true; }
+    else if(/unreliable|unstable|frequent cuts|bahut cut/i.test(combined)){ LD.grid='Grid Available but Unreliable'; changed=true; }
+    else if(/stable|good supply|24.hour|continuous/i.test(combined)){ LD.grid='Grid Available & Stable'; changed=true; }
+    else if(LD.cuts>2){ LD.grid='Grid Available but Unreliable'; changed=true; }
+  }
+
+  // ── BUDGET ──
+  if(!LD.budget){
+    if(/(\d+)\s*lakh/i.test(combined)){
+      var bm2 = combined.match(/(\d+)(?:\s*to\s*(\d+))?\s*lakh/i);
+      if(bm2){
+        var bval = parseInt(bm2[1]);
+        if(bval<1) LD.budget='Under ₹1 Lakh';
+        else if(bval<=2) LD.budget='₹1–2 Lakh';
+        else if(bval<=4) LD.budget='₹2–4 Lakh';
+        else if(bval<=7) LD.budget='₹4–7 Lakh';
+        else if(bval<=12) LD.budget='₹7–12 Lakh';
+        else LD.budget='Above ₹12 Lakh';
+        changed=true;
+      }
+    }
+  }
+
+  // ── AI RECOMMENDATION auto-generate ──
+  if(changed && LD.bill && LD.name){
+    var r2 = calcSolar(LD.bill,LD.units,LD.area,LD.cuts,LD.cutdur,LD.tariff||6.5,LD.systype_val||'offgrid');
+    if(r2){
+      var recLines = [];
+      recLines.push('AI Lead from Chat — '+LD.name+(LD.location?' ('+LD.location+')':''));
+      recLines.push((LD.systype_val==='offgrid'?'Offgrid':'Hybrid')+' '+r2.kw+'kW system recommended');
+      recLines.push('Bill ₹'+fmt(LD.bill)+'/mo | Cuts: '+(LD.cuts||'?')+'/day | Cost: ₹'+fmt(r2.cost));
+      recLines.push('Savings ₹'+fmt(r2.annSav)+'/yr | ROI: '+r2.roi+' yrs');
+      if(LD.cuts>3) recLines.push('⚡ HIGH CUT AREA — Offgrid essential. Close ASAP.');
+      LD.airec = recLines.join('\n');
+      var airec = document.getElementById('cp_airec');
+      if(airec){ airec.textContent=LD.airec; airec.style.color='rgba(255,150,150,0.9)'; }
+    }
+  }
+
+  if(changed) updatePreview();
+  return changed;
+}
+
+// ══════════════════════════════════════
+//  SAVE CHAT LEAD TO CRM
+// ══════════════════════════════════════
+function saveChatLead(){
+  if(!LD.name || !LD.phone || !LD.location){
+    alert('Please ensure name, phone and location are captured in the chat first.');
+    return;
+  }
+  var lead = Object.assign({}, LD, {
+    id: Date.now(),
+    date: new Date().toLocaleDateString('en-IN'),
+    stage: 'new',
+    wa: LD.wa || LD.phone
+  });
+  leads.unshift(lead);
+  saveLeads();
+
+  // Show success
+  var banner = document.getElementById('leadSavedBanner');
+  if(banner) banner.classList.add('show');
+  var btn = document.getElementById('cpSaveBtn');
+  if(btn){ btn.textContent='✅ SAVED!'; btn.disabled=true; }
+
+  updateBotStats();
+  refreshKPIs();
+  renderLeads(leads);
+
+  // Show popup in chat
+  addMsg('bot', '✅ <strong>Lead saved to CRM!</strong><br><br>Your details have been captured:<br>• <strong>'+LD.name+'</strong> — '+LD.location+'<br>• System: '+LD.kw+'kW '+(LD.systype_val==='offgrid'?'Offgrid':'Hybrid')+'<br>• Score: '+LD.score+'/99<br><br>Our team will contact you at <strong>'+LD.phone+'</strong> within 24 hours for a FREE site visit! ⚡<br><br>📞 <a href="tel:+918982379366" style="color:var(--red);">Call: +91 89823 79366</a>');
+
+  setTimeout(function(){
+    window.location.hash = 'crm';
+    gotoView('crm', null);
+  }, 3000);
+}
+
+// ══════════════════════════════════════
+//  CHAT ENGINE
+// ══════════════════════════════════════
+var isBotTyping = false;
+
+var SYSTEM_PROMPT = 'You are SURYA, Zonato Solar\'s expert AI sales agent. You represent Zonato Solar — EPC solar company at Uslapur, Bilaspur, Chhattisgarh 495001. GSTIN: 22AHNPR4108CZ1. Call: +91-8982379366.\n\nYOUR PRIMARY MISSION: Have a warm, natural conversation that collects these 10 data points ONE AT A TIME. Do NOT ask all questions at once. Collect naturally in flow:\n1. Customer name\n2. Location/city\n3. Monthly electricity bill (₹)\n4. Monthly units consumed (kWh)\n5. Number of power cuts per day\n6. Duration of each cut (hours)\n7. Available rooftop/ground area (sqft)\n8. Property type (home/shop/farm/factory)\n9. Grid connectivity (reliable/unreliable/no grid)\n10. Budget range\n\nAFTER collecting enough data (at least name + location + bill + cuts), AUTOMATICALLY CALCULATE:\n- System kW = (Monthly units/30)/5 OR (Bill/tariff/30)/5\n- Panels = system kW / 0.55 (550W panels)\n- Battery (offgrid) = daily units × 1.2 kWh\n- Cost: Offgrid ~₹85,000/kW + ₹12,000/kWh battery\n- Annual savings = monthly units × 12 × tariff × 0.85\n- ROI = total cost / annual savings\n\nKEY RULES:\n- Be conversational, warm, friendly — like a trusted solar expert friend\n- Collect ONE piece of info per message, feel natural not like a survey\n- When customer gives bill/cuts, always calculate and present the system immediately\n- If 4+ cuts/day: STRONGLY recommend Offgrid + explain why\n- If <2 cuts/day: recommend Hybrid\n- Always end with either asking next qualification question OR a CTA for free site visit\n- Use bold for key numbers\n- Mention that their details are being saved to CRM for team follow-up\n- Keep responses concise (3-5 lines max usually)\n- Natural Hindi words: Namaste, bilkul, zaroor, bahut accha\n\nDO NOT: Give long essays. Ask 3 questions at once. Be robotic.';
+
+function sendMsg(){
+  var inp = document.getElementById('chatIn');
+  var txt = (inp.value||'').trim();
+  if(!txt || isBotTyping) return;
+  inp.value = '';
+  addMsg('user', txt);
+  clearQR();
+  getBotReply(txt);
+}
+
+function quickSend(txt){
+  document.getElementById('chatIn').value = txt;
+  sendMsg();
+}
+
+function addMsg(role, html){
+  var box = document.getElementById('chatBox');
+  if(!box) return;
+  var d = document.createElement('div');
+  d.className = 'msg '+role;
+  var content = role==='bot'
+    ? (html||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')
+    : esc(html||'');
+  var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  d.innerHTML = '<div class="msg-bub">'+content+'</div><div class="msg-time">'+t+'</div>';
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+
+function showTyping(){
+  var box = document.getElementById('chatBox');
+  var d = document.createElement('div');
+  d.id = 'typingDot'; d.className = 'msg bot';
+  d.innerHTML = '<div class="msg-bub" style="padding:8px 12px;"><div class="typing-bub"><span></span><span></span><span></span></div></div>';
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+function hideTyping(){ var el=document.getElementById('typingDot'); if(el) el.remove(); }
+function clearQR(){ var r=document.getElementById('qrRow'); if(r) r.innerHTML=''; }
+
+function showQR(opts){
+  var row = document.getElementById('qrRow');
+  if(!row) return;
+  row.innerHTML = '';
+  (opts||[]).slice(0,4).forEach(function(o){
+    var d = document.createElement('div');
+    d.className = 'qr';
+    d.textContent = o.label;
+    d.onclick = function(){ quickSend(o.msg); };
+    row.appendChild(d);
+  });
+}
+
+async function getBotReply(userMsg){
+  isBotTyping = true;
+  showTyping();
+  chatHist.push({role:'user', content:userMsg});
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        system:SYSTEM_PROMPT,
+        messages:chatHist
+      })
+    });
+    var data = await resp.json();
+    hideTyping();
+
+    var reply = (data.content&&data.content.length)
+      ? data.content.map(function(c){return c.text||'';}).join('')
+      : 'I\'m having a moment — please call us at **+91 89823 79366**!';
+
+    chatHist.push({role:'assistant', content:reply});
+    addMsg('bot', reply);
+
+    // Extract data from BOTH user message and bot reply
+    var changed = extractFromConversation(userMsg, reply);
+
+    // Show contextual quick replies
+    setSmartQR(reply);
+
+    // Auto-show save button notification in chat if enough data
+    if(LD.name && LD.phone && LD.location && !document.getElementById('chatSavePrompt')){
+      var box = document.getElementById('chatBox');
+      var prm = document.createElement('div');
+      prm.id = 'chatSavePrompt';
+      prm.style.cssText = 'text-align:center;padding:10px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:3px;margin:6px 0;font-size:11px;color:var(--green);font-family:Rajdhani,sans-serif;letter-spacing:1px;';
+      prm.innerHTML = '✅ CRM READY — Click "SAVE TO CRM" button →';
+      box.appendChild(prm);
+      box.scrollTop = box.scrollHeight;
+    }
+
+  } catch(err){
+    hideTyping();
+    addMsg('bot','⚡ Connection issue. Please call: **+91 89823 79366** or WhatsApp!');
+  }
+  isBotTyping = false;
+}
+
+function setSmartQR(reply){
+  var opts = [];
+  var r = reply.toLowerCase();
+  if(!LD.name) opts.push({label:'👤 Share Name',msg:'My name is [your name], calling from [city]'});
+  else if(!LD.bill) opts.push({label:'💡 Share Bill',msg:'My electricity bill is around 3500 rupees per month'});
+  else if(!LD.cuts) opts.push({label:'🔴 Share Cuts',msg:'We have about 4 power cuts every day'});
+  else if(!LD.area) opts.push({label:'📐 Share Area',msg:'I have around 500 square feet of rooftop space'});
+  if(/offgrid|hybrid/i.test(r)) opts.push({label:'⚡ Compare Both',msg:'Compare offgrid vs hybrid for my situation'});
+  if(/cost|price|₹/i.test(r)) opts.push({label:'💰 EMI Option',msg:'Do you have EMI or loan options available?'});
+  if(/subsidy|government/i.test(r)) opts.push({label:'🏛 Subsidy Details',msg:'How much government subsidy will I get?'});
+  if(!opts.length) opts.push(
+    {label:'📋 Free Site Visit',msg:'I want to book a free site visit'},
+    {label:'📞 Call Me',msg:'Please have your team call me'}
+  );
+  showQR(opts.slice(0,4));
+}
+
+// ══════════════════════════════════════
+//  CRM FUNCTIONS
+// ══════════════════════════════════════
+function refreshKPIs(){
+  var el1=document.getElementById('k1'); if(el1) el1.textContent=leads.length;
+  var el1s=document.getElementById('k1s'); if(el1s) el1s.textContent=leads.length+' total leads';
+  var el2=document.getElementById('k2'); if(el2) el2.textContent=leads.filter(function(l){return l.status==='hot';}).length;
+  var el3=document.getElementById('k3'); if(el3) el3.textContent=leads.filter(function(l){return l.status==='converted';}).length;
+  var val=leads.reduce(function(s,l){return s+(l.cost||0);},0);
+  var el4=document.getElementById('k4'); if(el4) el4.textContent='₹'+(val/100000).toFixed(1)+'L';
+  var tb=document.getElementById('totalBadge'); if(tb) tb.textContent=leads.length;
+  var hb=document.getElementById('hotBadge'); if(hb) hb.textContent=leads.filter(function(l){return l.status==='hot';}).length;
+}
+
+function renderLeads(arr){
+  var tbody = document.getElementById('tLeads');
+  if(!tbody) return;
+  if(!arr||!arr.length){
+    tbody.innerHTML='<tr><td colspan="17" style="text-align:center;padding:32px;color:var(--muted);">No leads yet. Chat with SURYA AI to auto-capture leads!</td></tr>';
+    return;
+  }
+  tbody.innerHTML = arr.map(function(l,i){
+    return '<tr>'+
+      '<td style="color:var(--muted)">'+(i+1)+'</td>'+
+      '<td><strong>'+esc(l.name||'')+'</strong></td>'+
+      '<td>'+esc(l.location||'')+'</td>'+
+      '<td><a href="tel:'+esc(l.phone||'')+'" style="color:var(--red);text-decoration:none;">'+esc(l.phone||'')+'</a></td>'+
+      '<td>₹'+fmt(l.bill||0)+'</td>'+
+      '<td>'+(l.units||'—')+'</td>'+
+      '<td>'+(l.sanctload||'—')+'</td>'+
+      '<td>'+(l.area||'—')+'</td>'+
+      '<td style="color:'+(l.cuts>3?'var(--red)':'inherit')+'">'+(l.cuts||'—')+'</td>'+
+      '<td style="font-size:10px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(l.systype||'—')+'</td>'+
+      '<td style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;color:var(--red);">'+(l.kw||'—')+'</td>'+
+      '<td>₹'+fmt(l.cost||0)+'</td>'+
+      '<td style="color:var(--green)">₹'+fmt(l.annSav||0)+'</td>'+
+      '<td>'+(l.roi||'—')+'yr</td>'+
+      '<td><div style="display:flex;align-items:center;gap:5px;"><div class="sbar"><div class="sbar-f" style="width:'+(l.score||0)+'%"></div></div><span style="color:var(--red);font-family:\'Rajdhani\',sans-serif;font-size:11px;">'+(l.score||0)+'</span></div></td>'+
+      '<td><span class="st '+esc(l.status||'cold')+'">'+esc(l.status||'cold')+'</span></td>'+
+      '<td><button class="ta" onclick="viewLead(\''+l.id+'\')">👁</button> <button class="ta" onclick="delLead(\''+l.id+'\')">🗑</button></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function renderHot(){
+  var hot=leads.filter(function(l){return l.status==='hot';});
+  var tbody=document.getElementById('tHot'); if(!tbody) return;
+  if(!hot.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">No hot leads yet.</td></tr>';return;}
+  tbody.innerHTML=hot.map(function(l,i){
+    return '<tr><td>'+(i+1)+'</td><td><strong>'+esc(l.name||'')+'</strong></td><td>'+esc(l.location||'')+'</td>'+
+      '<td>₹'+fmt(l.bill||0)+'</td><td style="color:var(--red)">'+(l.cuts||'—')+'</td>'+
+      '<td style="font-size:10px;">'+esc(l.systype||'—')+'</td><td>₹'+fmt(l.cost||0)+'</td>'+
+      '<td style="color:var(--red);font-family:\'Bebas Neue\',sans-serif;font-size:16px;">'+(l.score||0)+'</td>'+
+      '<td><a href="tel:'+esc(l.phone||'')+'" class="ta">📞</a> <a href="https://wa.me/91'+(l.phone||'').replace(/\D/g,'')+'" target="_blank" class="ta">💬</a></td></tr>';
+  }).join('');
+}
+
+function renderConverted(){
+  var conv=leads.filter(function(l){return l.status==='converted';});
+  var tbody=document.getElementById('tConverted'); if(!tbody) return;
+  if(!conv.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">No converted leads yet.</td></tr>';return;}
+  tbody.innerHTML=conv.map(function(l,i){
+    return '<tr><td>'+(i+1)+'</td><td><strong>'+esc(l.name||'')+'</strong></td><td>'+esc(l.location||'')+'</td>'+
+      '<td style="font-size:10px;">'+esc(l.systype||'—')+'</td><td style="color:var(--red);">'+(l.kw||'—')+' kW</td>'+
+      '<td style="color:var(--green);">₹'+fmt(l.cost||0)+'</td><td>'+esc(l.date||'—')+'</td></tr>';
+  }).join('');
+}
+
+function renderPipeline(){
+  var configs=[
+    {id:'pl0',cid:'pc0',filter:function(l){return (!l.stage||l.stage==='new')&&l.status==='cold';}},
+    {id:'pl1',cid:'pc1',filter:function(l){return l.stage==='contacted';}},
+    {id:'pl2',cid:'pc2',filter:function(l){return l.status==='warm';}},
+    {id:'pl3',cid:'pc3',filter:function(l){return l.status==='hot';}},
+    {id:'pl4',cid:'pc4',filter:function(l){return l.status==='converted';}}
+  ];
+  configs.forEach(function(cfg){
+    var items=leads.filter(cfg.filter);
+    var cnt=document.getElementById(cfg.cid); if(cnt) cnt.textContent=items.length;
+    var container=document.getElementById(cfg.id); if(!container) return;
+    container.innerHTML=items.length?items.map(function(l){
+      return '<div class="p-card" onclick="gotoView(\'crm\',null);viewLead(\''+l.id+'\')">'+
+        '<div class="pcn">'+esc(l.name||'')+'</div>'+
+        '<div class="pci">📍 '+esc(l.location||'')+'</div>'+
+        '<div class="pcv">₹'+fmt(l.cost||0)+'</div></div>';
+    }).join(''):'<div style="font-size:11px;color:var(--muted);padding:6px;">Empty</div>';
+  });
+}
+
+function renderAnalytics(){
+  if(!leads.length){
+    ['a1','a2','a3','a4'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent='—';});
+    return;
+  }
+  var totalC=leads.reduce(function(s,l){return s+(l.cost||0);},0);
+  var totalK=leads.reduce(function(s,l){return s+(l.kw||0);},0);
+  var conv=leads.filter(function(l){return l.status==='converted';}).length;
+  var cities=new Set(leads.map(function(l){return (l.location||'').split(',')[0].trim();})).size;
+  var set=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  set('a1','₹'+(totalC/leads.length/100000).toFixed(1)+'L');
+  set('a2',(totalK/leads.length).toFixed(1));
+  set('a3',Math.round(conv/leads.length*100)+'%');
+  set('a4',cities);
+  var sysCnt={};leads.forEach(function(l){var k=(l.systype||'Unknown').substring(0,18);sysCnt[k]=(sysCnt[k]||0)+1;});
+  var maxS=Math.max.apply(null,Object.values(sysCnt).concat([1]));
+  set('ch1',Object.entries(sysCnt).map(function(e){
+    return '<div class="bar-r"><div class="bar-lbl">'+e[0]+'</div><div class="bar-trk"><div class="bar-fl" style="width:'+Math.round(e[1]/maxS*100)+'%"></div></div><div class="bar-v">'+e[1]+'</div></div>';
+  }).join(''));
+  var stCnt={hot:0,warm:0,cold:0,converted:0};
+  leads.forEach(function(l){stCnt[l.status||'cold']=(stCnt[l.status||'cold']||0)+1;});
+  var stColors={hot:'var(--red)',warm:'var(--amber)',cold:'var(--blue)',converted:'var(--green)'};
+  set('ch2',Object.entries(stCnt).filter(function(e){return e[1]>0;}).map(function(e){
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;"><div style="width:10px;height:10px;border-radius:50%;background:'+stColors[e[0]]+';flex-shrink:0;"></div><span style="font-size:12px;color:var(--text);">'+e[0].toUpperCase()+': '+e[1]+'</span></div>';
+  }).join(''));
+  var br={'<₹1k':0,'₹1-3k':0,'₹3-5k':0,'₹5-10k':0,'>₹10k':0};
+  leads.forEach(function(l){
+    if((l.bill||0)<1000)br['<₹1k']++;
+    else if(l.bill<3000)br['₹1-3k']++;
+    else if(l.bill<5000)br['₹3-5k']++;
+    else if(l.bill<10000)br['₹5-10k']++;
+    else br['>₹10k']++;
+  });
+  var maxB=Math.max.apply(null,Object.values(br).concat([1]));
+  set('ch3',Object.entries(br).map(function(e){
+    return '<div class="bar-r"><div class="bar-lbl">'+e[0]+'</div><div class="bar-trk"><div class="bar-fl" style="width:'+Math.round(e[1]/maxB*100)+'%"></div></div><div class="bar-v">'+e[1]+'</div></div>';
+  }).join(''));
+  var locCnt={};leads.forEach(function(l){var k=(l.location||'').split(',')[0].trim();locCnt[k]=(locCnt[k]||0)+1;});
+  var top5=Object.entries(locCnt).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+  var maxL=top5.length?top5[0][1]:1;
+  set('ch4',top5.map(function(e){
+    return '<div class="bar-r"><div class="bar-lbl">'+e[0]+'</div><div class="bar-trk"><div class="bar-fl" style="width:'+Math.round(e[1]/maxL*100)+'%"></div></div><div class="bar-v">'+e[1]+'</div></div>';
+  }).join('')||'<span style="color:var(--muted);font-size:12px;">No data</span>');
+}
+
+function viewLead(id){
+  var l=leads.find(function(x){return String(x.id)===String(id);});
+  if(!l) return;
+  var panel=document.getElementById('ldPanel'); if(!panel) return;
+  panel.classList.add('on');
+  var aok=(l.area||0)>=(l.areaNeed||0);
+  panel.innerHTML=
+    '<div class="ld-hdr">'+
+      '<div class="ld-av" style="background:'+(l.status==='hot'?'var(--red)':l.status==='warm'?'var(--amber)':l.status==='converted'?'var(--green)':'#333')+'">'+esc((l.name||'?')[0].toUpperCase())+'</div>'+
+      '<div><div class="ld-nm">'+esc(l.name||'')+'</div><div class="ld-sub">📍 '+esc(l.location||'')+'&nbsp;|&nbsp;📅 '+esc(l.date||'')+'</div></div>'+
+      '<div style="margin-left:auto;display:flex;gap:7px;flex-wrap:wrap;">'+
+        '<a href="tel:'+esc(l.phone||'')+'" class="btn btn-r" style="text-decoration:none;font-size:11px;">📞 Call</a>'+
+        '<a href="https://wa.me/91'+(l.phone||'').replace(/\D/g,'')+'" target="_blank" class="btn btn-o" style="text-decoration:none;font-size:11px;">💬 WA</a>'+
+        '<button class="btn btn-o" style="font-size:11px;" onclick="cycleStatus(\''+l.id+'\')">🔄 Status</button>'+
+        '<button class="btn btn-o" style="font-size:11px;" onclick="toggleFUForm(\'fu_'+l.id+'\')">📅 Follow-up</button>'+
+        '<button class="btn btn-o" style="font-size:11px;color:var(--green);" onclick="markConverted(\''+l.id+'\')">✅ Convert</button>'+
+        '<button class="btn btn-o" style="font-size:11px;" onclick="document.getElementById(\'ldPanel\').classList.remove(\'on\')">✕</button>'+
+      '</div>'+
+    '</div>'+
+    '<div id="fu_'+l.id+'" class="fu-form">'+
+      '<div class="fu-ttl">📅 SCHEDULE FOLLOW-UP</div>'+
+      '<div class="fu-row">'+
+        '<div><label style="font-size:9px;color:var(--muted);display:block;margin-bottom:3px;">DATE</label><input type="date" id="fud_'+l.id+'" style="color:var(--text)"/></div>'+
+        '<div><label style="font-size:9px;color:var(--muted);display:block;margin-bottom:3px;">TIME</label><input type="time" id="fut_'+l.id+'" style="color:var(--text)"/></div>'+
+        '<div style="flex:1;min-width:140px;"><label style="font-size:9px;color:var(--muted);display:block;margin-bottom:3px;">NOTE</label><input type="text" id="fun_'+l.id+'" placeholder="Site visit, discussion..." style="width:100%;color:var(--text);"/></div>'+
+        '<button class="btn btn-r" style="font-size:11px;" onclick="saveFollowUp(\''+l.id+'\')">Save</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="ld-cols">'+
+      '<div class="ld-col"><div class="ld-col-ttl">👤 Customer</div>'+
+        '<div class="ldf"><div class="fk">Phone</div><div class="fv">'+esc(l.phone||'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">Email</div><div class="fv">'+(l.email||'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">Address</div><div class="fv" style="font-size:11px;line-height:1.5">'+esc(l.address||l.location||'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">Property</div><div class="fv">'+(l.prop||'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">Source</div><div class="fv">'+(l.source||'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">Budget</div><div class="fv" style="color:var(--amber)">'+(l.budget||'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">Score</div><div class="fv"><div style="display:flex;align-items:center;gap:7px;"><div class="sbar" style="width:90px;height:7px;"><div class="sbar-f" style="width:'+(l.score||0)+'%"></div></div><span style="color:var(--red);font-family:\'Bebas Neue\',sans-serif;font-size:18px;">'+(l.score||0)+'/99</span></div></div></div>'+
+      '</div>'+
+      '<div class="ld-col"><div class="ld-col-ttl">⚡ Electricity</div>'+
+        '<div class="ldf"><div class="fk">Monthly Bill</div><div class="fv" style="color:var(--red);font-family:\'Bebas Neue\',sans-serif;font-size:20px;">₹'+fmt(l.bill||0)+'</div></div>'+
+        '<div class="ldf"><div class="fk">Units/Month</div><div class="fv">'+(l.units||'—')+' kWh</div></div>'+
+        '<div class="ldf"><div class="fk">Tariff</div><div class="fv">₹'+(l.tariff||'—')+'/unit</div></div>'+
+        '<div class="ldf"><div class="fk">Sanction Load</div><div class="fv">'+(l.sanctload||'—')+' kW</div></div>'+
+        '<div class="ldf"><div class="fk">Power Cuts/Day</div><div class="fv" style="color:'+(l.cuts>3?'var(--red)':l.cuts>1?'var(--amber)':'var(--green)')+'">'+
+          (l.cuts||'—')+' cuts'+(l.cutdur?' × '+l.cutdur+'h':'')+(l.cuts>3?' 🔴':'')+
+        '</div></div>'+
+        '<div class="ldf"><div class="fk">Daily Outage</div><div class="fv">'+(l.cuts&&l.cutdur?(l.cuts*l.cutdur)+' hrs/day':'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">Grid</div><div class="fv" style="font-size:11px;">'+(l.grid||'—')+'</div></div>'+
+      '</div>'+
+      '<div class="ld-col"><div class="ld-col-ttl">☀️ Solar Design</div>'+
+        '<div class="ldf"><div class="fk">System</div><div class="fv" style="color:var(--red);font-size:11px;">'+esc(l.systype||'—')+'</div></div>'+
+        '<div class="ldf"><div class="fk">System Size</div><div class="fv" style="font-family:\'Bebas Neue\',sans-serif;font-size:24px;color:var(--red);">'+(l.kw||'—')+' kW</div></div>'+
+        '<div class="ldf"><div class="fk">Panels</div><div class="fv">'+(l.panels||'—')+' × 550W</div></div>'+
+        '<div class="ldf"><div class="fk">Battery</div><div class="fv">'+(l.battKwh||'—')+' kWh LiFePO4</div></div>'+
+        '<div class="ldf"><div class="fk">Area Required</div><div class="fv" style="color:'+(aok?'var(--green)':'var(--red)')+'">'+
+          (l.areaNeed||'—')+' sqft '+(l.area?(aok?'✓':'⚠ Short'):'')+
+        '</div></div>'+
+        '<div class="ldf"><div class="fk">Install Time</div><div class="fv">'+(l.days||'—')+' days</div></div>'+
+        '<div class="ldf"><div class="fk">Est. Cost</div><div class="fv" style="font-family:\'Bebas Neue\',sans-serif;font-size:20px;color:var(--red);">₹'+fmt(l.cost||0)+'</div></div>'+
+        '<div class="ldf"><div class="fk">Annual Savings</div><div class="fv" style="color:var(--green);">₹'+fmt(l.annSav||0)+'/yr</div></div>'+
+        '<div class="ldf"><div class="fk">ROI</div><div class="fv">'+(l.roi||'—')+' years</div></div>'+
+      '</div>'+
+    '</div>'+
+    (l.airec?'<div class="ai-box"><div class="ai-lbl">🤖 AI RECOMMENDATION</div><pre style="white-space:pre-wrap;font-family:\'Exo 2\',sans-serif;font-size:11px;line-height:1.65;color:var(--text);">'+esc(l.airec)+'</pre></div>':'')+
+    (l.notes?'<div style="padding:12px 18px;"><div style="font-family:\'Rajdhani\',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">NOTES</div><div style="font-size:12px;color:var(--text);line-height:1.6;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:3px;padding:10px;">'+esc(l.notes)+'</div></div>':'')+
+    '<div style="padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">'+
+      '<a href="https://wa.me/91'+(l.phone||'').replace(/\D/g,'')+
+        '?text='+encodeURIComponent('Namaste '+(l.name||'')+', Zonato Solar here! Your solar proposal: '+(l.kw||'?')+'kW system. Est Cost ₹'+fmt(l.cost||0)+'. Annual Savings ₹'+fmt(l.annSav||0)+'. Free site visit? Call: 89823 79366')+
+        '" target="_blank" class="btn btn-r" style="text-decoration:none;font-size:11px;">💬 Send WA Proposal</a>'+
+      '<button class="btn btn-o" style="font-size:11px;" onclick="delLead(\''+l.id+'\')">🗑 Delete</button>'+
+    '</div>';
+}
+
+function toggleFUForm(id){ var el=document.getElementById(id); if(el) el.style.display=el.style.display==='block'?'none':'block'; }
+
+function saveFollowUp(lid){
+  var date=(document.getElementById('fud_'+lid)||{}).value;
+  var time=(document.getElementById('fut_'+lid)||{}).value;
+  var note=(document.getElementById('fun_'+lid)||{}).value||'Follow-up';
+  if(!date||!time){alert('Select date and time.');return;}
+  var fus=JSON.parse(localStorage.getItem('zs_fus')||'[]');
+  fus.push({lid:lid,date:date,time:time,note:note,done:false,id:Date.now()});
+  localStorage.setItem('zs_fus',JSON.stringify(fus));
+  toggleFUForm('fu_'+lid);
+  alert('✅ Follow-up scheduled for '+date+' at '+time);
+}
+
+function renderFU(){
+  var fus=JSON.parse(localStorage.getItem('zs_fus')||'[]');
+  var el=document.getElementById('fuList'); if(!el) return;
+  if(!fus.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);">No follow-ups yet.</div>';return;}
+  el.innerHTML=fus.map(function(f,i){
+    var lead=leads.find(function(l){return String(l.id)===String(f.lid);});
+    var nm=lead?lead.name:'Unknown'; var loc=lead?lead.location:'';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid '+(f.done?'rgba(34,197,94,0.15)':'rgba(232,28,28,0.12)')+';border-radius:3px;margin-bottom:8px;background:'+(f.done?'rgba(34,197,94,0.04)':'rgba(232,28,28,0.03)')+';flex-wrap:wrap;">'+
+      '<div class="n-ico '+(f.done?'g':'a')+'">'+(f.done?'✅':'📅')+'</div>'+
+      '<div style="flex:1;min-width:160px;"><div class="n-ttl"><strong>'+esc(nm)+'</strong> — '+esc(f.note)+'</div><div class="n-tm">📍 '+esc(loc)+' | 🗓 '+f.date+' at '+f.time+'</div></div>'+
+      (!f.done?'<button class="ta" onclick="doneFU('+i+')">✓ Done</button>':'')+
+      '<button class="ta" onclick="delFU('+i+')">🗑</button>'+
+    '</div>';
+  }).join('');
+}
+
+function doneFU(i){var fus=JSON.parse(localStorage.getItem('zs_fus')||'[]');if(fus[i])fus[i].done=true;localStorage.setItem('zs_fus',JSON.stringify(fus));renderFU();}
+function delFU(i){var fus=JSON.parse(localStorage.getItem('zs_fus')||'[]');fus.splice(i,1);localStorage.setItem('zs_fus',JSON.stringify(fus));renderFU();}
+
+function delLead(id){
+  if(!confirm('Delete this lead?'))return;
+  leads=leads.filter(function(l){return String(l.id)!==String(id);});
+  saveLeads();refreshKPIs();renderLeads(leads);
+  var p=document.getElementById('ldPanel');if(p)p.classList.remove('on');
+}
+
+function cycleStatus(id){
+  var l=leads.find(function(x){return String(x.id)===String(id);});
+  if(!l)return;
+  var order=['cold','warm','hot','converted'];
+  l.status=order[(order.indexOf(l.status)+1)%order.length];
+  saveLeads();refreshKPIs();renderLeads(leads);viewLead(id);
+}
+
+function markConverted(id){
+  var l=leads.find(function(x){return String(x.id)===String(id);});
+  if(!l)return;
+  l.status='converted';l.score=99;l.stage='converted';
+  saveLeads();refreshKPIs();renderLeads(leads);viewLead(id);
+  alert('🎉 '+l.name+' marked CONVERTED! ₹'+fmt(l.cost||0)+' deal!');
+}
+
+function filterLeads(q){
+  if(!q){renderLeads(leads);return;}
+  q=q.toLowerCase();
+  renderLeads(leads.filter(function(l){
+    return (l.name||'').toLowerCase().includes(q)||(l.location||'').toLowerCase().includes(q)||
+           (l.phone||'').includes(q)||(l.status||'').includes(q);
+  }));
+}
+
+function exportCSV(){
+  if(!leads.length){alert('No leads to export.');return;}
+  var hdrs=['Name','Phone','Email','Location','Bill','Units','SanctionKW','Area','Cuts/Day','SystemType','SystemKW','EstCost','AnnualSavings','ROI','Score','Status','Date','Source'];
+  var rows=leads.map(function(l){return [l.name,l.phone,l.email,l.location,l.bill,l.units,l.sanctload,l.area,l.cuts,l.systype,l.kw,l.cost,l.annSav,l.roi,l.score,l.status,l.date,l.source].map(function(v){return '"'+(v||'')+'"';}).join(',');});
+  var csv=[hdrs.join(',')].concat(rows).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='ZonatoSolar_Leads_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+function liveCalc(){
+  var bill=parseFloat(document.getElementById('sc_bill').value)||0;
+  var units=parseFloat(document.getElementById('sc_units').value)||0;
+  var area=parseFloat(document.getElementById('sc_area').value)||0;
+  var cuts=parseFloat(document.getElementById('sc_cuts').value)||0;
+  var tariff=parseFloat(document.getElementById('sc_tariff').value)||6.5;
+  var type=(document.getElementById('sc_type')||{}).value||'offgrid';
+  if(!bill&&!units){var el=document.getElementById('scRes');if(el)el.innerHTML='<span style="color:var(--muted)">Enter bill or units...</span>';return;}
+  var r=calcSolar(bill,units,area,cuts,0,tariff,type);
+  if(!r)return;
+  var aok=area?area>=r.areaNeed:true;
+  var scRes=document.getElementById('scRes');
+  if(scRes) scRes.innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'+
+    scRow('System Size',r.kw+' kW')+scRow('Panels',r.panels+' × 550W')+
+    scRow('Battery',r.battKwh+' kWh Lithium')+
+    scRow('Area Required',r.areaNeed+' sqft '+(area?(aok?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">⚠</span>'):''))+
+    scRow('Install Time',r.days+' days')+scRow('Est. Cost','₹'+fmt(r.cost))+
+    scRow('Annual Savings','₹'+fmt(r.annSav))+scRow('ROI',r.roi+' years')+
+    '</div>'+(cuts>3?'<div style="background:rgba(232,28,28,0.1);border:1px solid rgba(232,28,28,0.3);padding:9px 12px;border-radius:3px;margin-top:10px;font-size:11px;color:var(--text);">⚡ <strong>'+cuts+' cuts/day</strong> — Offgrid strongly recommended.</div>':'');
+}
+
+function scRow(k,v){return '<div class="sc-res-item"><div class="rv">'+v+'</div><div class="rl">'+k+'</div></div>';}
+
+// ══════════════════════════════════════
+//  DEMO DATA + INIT
+// ══════════════════════════════════════
+function seedDemo(){
+  if(leads.length>0)return;
+  leads=[
+    {id:1001,name:'Ramesh Kumar Sahu',phone:'9876543210',email:'ramesh@gmail.com',location:'Bilaspur, CG',address:'Ward 12',source:'AI Bot Chat (Surya)',bill:5500,units:550,sanctload:5,tariff:7,cuts:6,cutdur:2,area:900,roof:'RCC Flat Roof',prop:'Residential',grid:'Grid Available but Unreliable',systype:'Offgrid Solar + Lithium Battery',systype_val:'offgrid',battery:'Lithium LiFePO4',budget:'₹2–4 Lakh',status:'hot',notes:'6 power cuts/day. Wants site visit ASAP.',airec:'HOT: 6 cuts/day, ₹5500 bill. Offgrid 3.7kW essential.',kw:3.7,panels:7,battKwh:22,areaNeed:175,days:3,cost:364900,annSav:73500,roi:5,score:85,date:'04/05/2026',stage:'hot'},
+    {id:1002,name:'Sunita Devi',phone:'9988776655',email:'',location:'Raipur, CG',address:'Sector 8',source:'AI Bot Chat (Surya)',bill:8200,units:820,sanctload:8,tariff:7.5,cuts:3,cutdur:1.5,area:600,roof:'Tiled Roof',prop:'Commercial',grid:'Grid Available but Unreliable',systype:'Hybrid Solar + Lithium Battery',systype_val:'hybrid',battery:'Lithium LiFePO4',budget:'₹4–7 Lakh',status:'warm',notes:'Shop owner.',airec:'WARM: ₹8200, commercial. Hybrid 5.5kW.',kw:5.5,panels:10,battKwh:20,areaNeed:250,days:4,cost:652500,annSav:125460,roi:5.2,score:62,date:'03/05/2026',stage:'warm'},
+    {id:1003,name:'Mohan Patel',phone:'8765432109',email:'',location:'Korba, CG',address:'CSEB Colony',source:'AI Bot Chat (Surya)',bill:3200,units:320,sanctload:3,tariff:6.5,cuts:8,cutdur:3,area:400,roof:'RCC Flat Roof',prop:'Residential',grid:'No Grid (Remote Area)',systype:'Offgrid Solar + Lithium Battery',systype_val:'offgrid',battery:'Lithium LiFePO4',budget:'₹2–4 Lakh',status:'hot',notes:'No grid. Remote area.',airec:'CRITICAL: No grid + 8 cuts. Offgrid only solution.',kw:2.2,panels:4,battKwh:16,areaNeed:100,days:2,cost:271400,annSav:44928,roi:6,score:90,date:'02/05/2026',stage:'hot'},
+    {id:1004,name:'Kavita Singh',phone:'7654321098',email:'',location:'Durg, CG',address:'Bhilai Nagar',source:'AI Bot Chat (Surya)',bill:1800,units:180,sanctload:2,tariff:6,cuts:1,cutdur:1,area:250,roof:'RCC Flat Roof',prop:'Residential',grid:'Grid Available & Stable',systype:'Hybrid Solar + Lithium Battery',systype_val:'hybrid',battery:'Lithium LiFePO4',budget:'₹1–2 Lakh',status:'cold',notes:'Low urgency.',airec:'COLD: Low bill. Nurture.',kw:1.2,panels:3,battKwh:4,areaNeed:75,days:2,cost:138000,annSav:25920,roi:5.3,score:18,date:'01/05/2026',stage:'new'},
+    {id:1005,name:'Rajendra Gupta',phone:'6543210987',email:'',location:'Jagdalpur, CG',address:'Main Road',source:'Phone Call',bill:12000,units:1200,sanctload:10,tariff:7.5,cuts:5,cutdur:2.5,area:1200,roof:'RCC Flat Roof',prop:'Commercial',grid:'Grid Available but Unreliable',systype:'Offgrid Solar + Lithium Battery',systype_val:'offgrid',battery:'Lithium LiFePO4',budget:'Above ₹12 Lakh',status:'converted',notes:'Work Order signed.',airec:'CONVERTED.',kw:8,panels:15,battKwh:48,areaNeed:375,days:6,cost:1020000,annSav:163800,roi:6.2,score:99,date:'28/04/2026',stage:'converted'}
+  ];
+  saveLeads();
+}
+
+seedDemo();
+refreshKPIs();
+renderLeads(leads);
+updateBotStats();
+updatePreview();
+routeHash();
+</script>
+</body>
+</html>
 
