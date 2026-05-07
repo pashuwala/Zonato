@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Disclaimer — ZSharad | Zonato Solar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sun: #F5A623;
+      --sun-deep: #D4820A;
+      --gold: #C9922A;
+      --dark: #0A0C0F;
+      --dark2: #111418;
+      --panel: #161B22;
+      --border: rgba(245,166,35,0.18);
+      --text: #E8E2D6;
+      --muted: #8A8070;
+      --accent: #FFD166;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background texture ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,166,35,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 90% 90%, rgba(201,146,42,0.07) 0%, transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 5vw;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,12,15,0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .logo-icon svg { width: 100%; height: 100%; }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    .logo-sub {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .header-badge {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sun);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.75rem;
+      border-radius: 2px;
+    }
+
+    /* ── Hero band ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 5vw 3.5rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sun);
+      margin-bottom: 1.2rem;
+      padding: 0.3rem 1rem;
+      border: 1px solid rgba(245,166,35,0.3);
+      border-radius: 2px;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 6vw, 4.5rem);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .hero-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-meta strong {
+      color: var(--sun);
+      font-weight: 500;
+    }
+
+    /* ── Divider ── */
+    .sun-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2.5rem auto;
+      max-width: 320px;
+    }
+
+    .sun-divider::before,
+    .sun-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--sun), transparent);
+    }
+
+    .sun-divider svg {
+      width: 18px;
+      height: 18px;
+      color: var(--sun);
+      flex-shrink: 0;
+    }
+
+    /* ── Main content ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 5vw 5rem;
+    }
+
+    /* ── Section card ── */
+    .section-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem 2.2rem;
+      margin-bottom: 1.6rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+
+    .section-card:hover {
+      border-color: rgba(245,166,35,0.38);
+    }
+
+    .section-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--sun), var(--sun-deep));
+    }
+
+    .section-number {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sun);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .section-card h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .section-card p {
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      line-height: 1.8;
+    }
+
+    .section-card p:last-child { margin-bottom: 0; }
+
+    .section-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0;
+    }
+
+    .section-card ul li {
+      font-size: 0.88rem;
+      color: var(--text);
+      padding: 0.35rem 0 0.35rem 1.4rem;
+      position: relative;
+      line-height: 1.7;
+    }
+
+    .section-card ul li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--sun);
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    /* ── Alert box ── */
+    .alert-box {
+      background: rgba(245,166,35,0.06);
+      border: 1px solid rgba(245,166,35,0.25);
+      border-radius: 4px;
+      padding: 1.1rem 1.4rem;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+      color: var(--accent);
+      line-height: 1.7;
+    }
+
+    .alert-box strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Highlight tag ── */
+    .highlight {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ── Contact band ── */
+    .contact-band {
+      background: linear-gradient(135deg, rgba(245,166,35,0.1), rgba(201,146,42,0.06));
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem 2.2rem;
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .contact-band h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-band p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .contact-band a {
+      color: var(--sun);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .contact-band a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 5vw;
+      text-align: center;
+    }
+
+    .footer-logos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-logos span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .footer-logos .sep {
+      color: var(--border);
+      font-size: 0.8rem;
+    }
+
+    footer p {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      line-height: 1.6;
+    }
+
+    .footer-copy {
+      margin-top: 0.5rem;
+      font-size: 0.68rem;
+      color: rgba(138,128,112,0.6);
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      animation: fadeUp 0.65s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal:nth-child(1)  { animation-delay: 0.05s; }
+    .reveal:nth-child(2)  { animation-delay: 0.12s; }
+    .reveal:nth-child(3)  { animation-delay: 0.19s; }
+    .reveal:nth-child(4)  { animation-delay: 0.26s; }
+    .reveal:nth-child(5)  { animation-delay: 0.33s; }
+    .reveal:nth-child(6)  { animation-delay: 0.40s; }
+    .reveal:nth-child(7)  { animation-delay: 0.47s; }
+    .reveal:nth-child(8)  { animation-delay: 0.54s; }
+    .reveal:nth-child(9)  { animation-delay: 0.61s; }
+    .reveal:nth-child(10) { animation-delay: 0.68s; }
+    .reveal:nth-child(11) { animation-delay: 0.75s; }
+
+    @media (max-width: 600px) {
+      .section-card { padding: 1.4rem 1.2rem; }
+      .hero { padding: 3rem 5vw 2.5rem; }
+      header { flex-direction: column; gap: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <div class="logo-wrap">
+    <div class="logo-icon">
+      <!-- Solar / sun icon -->
+      <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="21" cy="21" r="9" fill="#F5A623" opacity="0.95"/>
+        <circle cx="21" cy="21" r="13" stroke="#F5A623" stroke-width="1" opacity="0.3"/>
+        <!-- Rays -->
+        <line x1="21" y1="3"  x2="21" y2="8"  stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="21" y1="34" x2="21" y2="39" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="3"  y1="21" x2="8"  y2="21" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="34" y1="21" x2="39" y2="21" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+        <line x1="7.5"  y1="7.5"  x2="11"  y2="11"  stroke="#F5A623" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="31"   y1="31"   x2="34.5" y2="34.5" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="34.5" y1="7.5"  x2="31"   y2="11"  stroke="#F5A623" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="11"   y1="31"   x2="7.5"  y2="34.5" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="logo-brand">ZSharad</span>
+      <span class="logo-sub">Zonato Solar</span>
+    </div>
+  </div>
+  <div class="header-badge">Legal &amp; Compliance</div>
+</header>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-eyebrow">Official Legal Document</div>
+  <h1>Website <span>Disclaimer</span></h1>
+  <div class="sun-divider">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a1 1 0 011 1v1a1 1 0 01-2 0V3a1 1 0 011-1zm6.364 3.636a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM21 12a1 1 0 01-1 1h-1a1 1 0 010-2h1a1 1 0 011 1zM4.929 19.071a1 1 0 010-1.414l.707-.707A1 1 0 117.05 18.364l-.707.707a1 1 0 01-1.414 0zM12 19a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1zM5.636 5.636a1 1 0 011.414 0l.707.707A1 1 0 115.343 7.757l-.707-.707a1 1 0 010-1.414zM4 12a1 1 0 01-1-1H2a1 1 0 010 2h1a1 1 0 001-1zm14.364 6.364a1 1 0 01-1.414 0l-.707-.707a1 1 0 111.414-1.414l.707.707a1 1 0 010 1.414zM12 7a5 5 0 100 10A5 5 0 0012 7z"/></svg>
+  </div>
+  <p class="hero-meta">
+    Brand: <strong>ZSharad</strong> &nbsp;|&nbsp; Company: <strong>Zonato Solar</strong> &nbsp;|&nbsp;
+    Effective Date: <strong>01 January 2025</strong>
+  </p>
+</section>
+
+<!-- ── Main content ── -->
+<main>
+
+  <!-- 1. General Disclaimer -->
+  <div class="section-card reveal">
+    <span class="section-number">01 — General Disclaimer</span>
+    <h2>General Notice</h2>
+    <p>
+      The information provided on this website is published by <span class="highlight">ZSharad</span>, the official brand identity of <span class="highlight">Zonato Solar</span>, for general informational purposes only. All content, data, product descriptions, pricing, and other materials on this website are subject to change without notice.
+    </p>
+    <p>
+      While we take every effort to ensure the accuracy and reliability of the information published herein, Zonato Solar and the ZSharad brand make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the website or the information, products, services, or related graphics for any purpose.
+    </p>
+    <div class="alert-box">
+      <strong>⚠ Important</strong>
+      Any reliance you place on the information provided on this website is strictly at your own risk. Zonato Solar shall not be liable for any loss, damage, or inconvenience arising from such reliance.
+    </div>
+  </div>
+
+  <!-- 2. Copyright Protection -->
+  <div class="section-card reveal">
+    <span class="section-number">02 — Copyright Protection</span>
+    <h2>Intellectual Property &amp; Copyright</h2>
+    <p>
+      All content published on this website — including but not limited to text, graphics, logos, icons, images, diagrams, technical documents, brand assets, videos, audio clips, and software — is the exclusive intellectual property of <span class="highlight">Zonato Solar</span> operating under the brand name <span class="highlight">ZSharad</span>, and is protected under the applicable copyright laws of India and international copyright conventions.
+    </p>
+    <p><strong style="color:#fff;">You are strictly prohibited from:</strong></p>
+    <ul>
+      <li>Reproducing, copying, distributing, or republishing any content from this website without prior written consent from Zonato Solar.</li>
+      <li>Using the ZSharad name, Zonato Solar logo, or any associated brand marks for commercial or non-commercial purposes without authorisation.</li>
+      <li>Modifying, adapting, or creating derivative works from any material found on this website.</li>
+      <li>Scraping, harvesting, or automated extraction of content for any purpose.</li>
+      <li>Using our content in any way that is misleading, defamatory, or in violation of applicable law.</li>
+    </ul>
+    <p style="margin-top:0.8rem;">
+      Permitted personal, non-commercial use must retain all copyright and proprietary notices. For licensing or permissions, contact us directly.
+    </p>
+  </div>
+
+  <!-- 3. Trademark -->
+  <div class="section-card reveal">
+    <span class="section-number">03 — Trademarks</span>
+    <h2>Trademark Rights</h2>
+    <p>
+      "<span class="highlight">ZSharad</span>" and "<span class="highlight">Zonato Solar</span>", along with their associated logos, taglines, and brand elements, are registered or common-law trademarks of Zonato Solar. Unauthorised use of these marks is prohibited and may constitute trademark infringement.
+    </p>
+    <p>
+      All other trademarks, product names, and company names mentioned on this website are the property of their respective owners and are used only for identification purposes.
+    </p>
+  </div>
+
+  <!-- 4. Content Safety -->
+  <div class="section-card reveal">
+    <span class="section-number">04 — Content Safety</span>
+    <h2>Content Safety &amp; Acceptable Use</h2>
+    <p>
+      Zonato Solar is committed to maintaining a safe, respectful, and lawful digital environment. All users accessing this website agree to the following content safety terms:
+    </p>
+    <ul>
+      <li>You will not use this website or its content to engage in any unlawful, harmful, threatening, abusive, defamatory, or otherwise objectionable activity.</li>
+      <li>You will not attempt to hack, deface, disrupt, or interfere with the functioning of this website or its underlying systems.</li>
+      <li>You will not transmit or distribute any viruses, malware, or harmful code through any interaction with this website.</li>
+      <li>You will not misrepresent your identity or affiliation with Zonato Solar / ZSharad in any manner.</li>
+      <li>You will not engage in spam, phishing, or any deceptive practices using material from this website.</li>
+    </ul>
+    <div class="alert-box">
+      <strong>🔒 Content Moderation</strong>
+      Zonato Solar reserves the right to remove, restrict, or take legal action against any content or user activity that violates these safety terms, applicable law, or our community standards.
+    </div>
+  </div>
+
+  <!-- 5. Third-Party Links -->
+  <div class="section-card reveal">
+    <span class="section-number">05 — External Links</span>
+    <h2>Third-Party Links &amp; References</h2>
+    <p>
+      This website may contain links to external websites for reference or convenience. Zonato Solar does not control and is not responsible for the content, privacy policies, or practices of any third-party websites. The inclusion of any link does not constitute an endorsement or recommendation by ZSharad or Zonato Solar.
+    </p>
+    <p>
+      We strongly advise you to review the terms and privacy policies of any third-party websites you visit through links on our platform.
+    </p>
+  </div>
+
+  <!-- 6. Limitation of Liability -->
+  <div class="section-card reveal">
+    <span class="section-number">06 — Liability</span>
+    <h2>Limitation of Liability</h2>
+    <p>
+      To the maximum extent permitted by applicable law, Zonato Solar and the ZSharad brand shall not be liable for any indirect, incidental, consequential, special, or punitive damages arising out of or in connection with your use of this website, its content, or any linked third-party websites.
+    </p>
+    <p>
+      This includes, without limitation, damages for loss of revenue, loss of data, loss of goodwill, service interruption, computer damage, or system failure.
+    </p>
+  </div>
+
+  <!-- 7. Governing Law -->
+  <div class="section-card reveal">
+    <span class="section-number">07 — Governing Law</span>
+    <h2>Jurisdiction &amp; Governing Law</h2>
+    <p>
+      This disclaimer and all matters relating to the use of the ZSharad / Zonato Solar website are governed by and construed in accordance with the laws of <span class="highlight">India</span>. Any disputes arising out of or in connection with these terms shall be subject to the exclusive jurisdiction of the competent courts of India.
+    </p>
+  </div>
+
+  <!-- 8. Amendments -->
+  <div class="section-card reveal">
+    <span class="section-number">08 — Amendments</span>
+    <h2>Changes to This Disclaimer</h2>
+    <p>
+      Zonato Solar reserves the right to modify, update, or replace any part of this Disclaimer at any time and without prior notice. Changes will be effective immediately upon posting to the website. Your continued use of the website following the posting of any changes constitutes your acceptance of those changes.
+    </p>
+    <p>
+      We recommend reviewing this page periodically to stay informed of any updates.
+    </p>
+  </div>
+
+  <!-- Contact -->
+  <div class="contact-band reveal">
+    <h3>Contact &amp; Permissions</h3>
+    <p>For copyright queries, licensing requests, or any legal notices, please reach out to the ZSharad / Zonato Solar legal team:</p>
+    <p>📧 Email: <a href="mailto:legal@zonatosolar.com">legal@zonatosolar.com</a></p>
+    <p>🌐 Website: <a href="#">www.zonatosolar.com</a></p>
+    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--muted);">
+      © 2025 Zonato Solar — ZSharad. All Rights Reserved.
+    </p>
+  </div>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-logos">
+    <span>ZSharad</span>
+    <span class="sep">·</span>
+    <span style="color:var(--muted); font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:300;">Zonato Solar</span>
+  </div>
+  <p>Disclaimer &nbsp;|&nbsp; Copyright Policy &nbsp;|&nbsp; Content Safety Terms</p>
+  <p class="footer-copy">© 2025 Zonato Solar. Brand: ZSharad. All intellectual property rights reserved. Unauthorised use is prohibited.</p>
+</footer>
+
+</body>
+</html>
